@@ -1,0 +1,211 @@
+/*#3a3f44*/
+
+.TagsEx{
+    list-style: none;
+  display: inline;
+    margin:0;
+    padding:0;
+}
+
+.TagsEx li {
+ margin: 0px 3px 0px 3px;
+ display: inline-block;
+    padding: 0;
+}
+
+#Tags{
+    font-size:0.8em;
+}
+
+.TagsEx a{
+text-decoration: none;
+display: inline;
+padding: .2em .6em .3em;
+text-align: center;
+white-space: nowrap;
+border-radius: .25em;
+font-size: 75%;
+font-weight: 700;
+line-height: 1;
+vertical-align: baseline;
+}
+
+#Tag_Ads{
+background-color: #161737;
+color: #fff;
+}
+
+#Tag_Android{
+background-color: #3366db;
+color: #fff;
+}
+
+#Tag_Animation{
+background-color: #410477;;
+color: #fff;
+}
+
+#Tag_API{
+background-color: #120c27;
+color: #fff;
+}
+
+#Tag_artwork{
+background-color: #613000;
+color: #fff; 
+}
+
+#Tag_Assets{
+background-color: #451c36;
+color: #fff;
+}
+
+#Tag_Audio{
+background-color: #063305;
+color: #fff;
+}
+
+#Tag_CSharp{
+background-color: #235058;
+color: #fff;
+}
+
+#Tag_Cpp{
+background-color: #525960;
+color: #ffd138;
+}
+
+#Tag_Design{
+background-color: #b30f4b;
+color:#fff;
+}
+
+#Tag_Editor{
+background-color: #000;
+color: #fff;
+}
+
+#Tag_Free{
+background-color: #163437;
+color: #fff;
+}
+
+#Tag_FX{
+    background-color:#0098c7;
+    color:#3600a3;
+}
+
+#Tag_Gdscript{
+background-color: #0b6655;
+color: #fff;
+}
+
+#Tag_Html5{
+background-color: #f50;
+color: #fff;
+}
+
+#Tag_Input{
+background-color: #75ddff;
+color: #000a38;
+}
+
+#Tag_iOS{
+background-color: #fff;
+color: #000;
+}
+
+#Tag_Languages{
+background-color: #acd2f6;
+color: #063c07;
+}
+
+#Tag_Linux{
+background-color: #c15a06;
+color: #fff;
+}
+
+#Tag_Modelling{
+background-color: #9f5f23;
+color: #fff;
+}
+
+#Tag_Networking{
+background-color: #ccd5ff;
+color: #000f52;
+}
+
+#Tag_Off-Topic{
+background-color: #45421c;
+color: #fff;
+}
+
+#Tag_OSS{
+background-color: #fff;
+color: #0e99c4;
+}
+
+#Tag_OSX{
+background-color: #fff;
+color: #575757;
+}
+
+#Tag_Paid{
+background-color: #373416;
+color: #fff;
+}
+
+#Tag_Physics{
+background-color: #00187a;
+color: #fff;
+}
+
+#Tag_Released{
+background-color: #861d24;
+color: #fff;
+}
+
+#Tag_Steam{
+background-color: #301646;
+color: #fff;
+}
+
+#Tag_Themes{
+background-color: #fff;
+color: #9f1941;
+}
+
+#Tag_Tilemaps{
+background-color: #215d0e;
+color: #fff;
+}
+
+#Tag_Tools{
+background-color: #303536;
+color: #fff;
+}
+
+#Tag_VisualScript{
+background-color: #0b3a66;
+color: #fff;
+}
+
+#Tag_WIP{
+background-color: #149f18;
+color: #fff;
+}
+
+#Tag_Windows{
+background-color: #2f82d0;
+color: #fff;
+}
+
+#Tag_base{
+background-color: #3a3f44;
+color: #fff;
+}
+
+.MessageList .Meta.InlineTags {
+    min-height: 0;
+    display: none;
+}

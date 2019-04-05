@@ -1,0 +1,63 @@
+/*
+* The MIT License
+* Copyright (c) 2012 Matias Meno <m@tias.me>
+*/
+.imguruploader-preview-ctx, .imguruploader-preview-ctx * {
+	box-sizing: border-box; 
+}
+
+.imguruploader-preview-ctx {
+	position: relative; 
+}
+.imguruploader-preview-ctx .dz-preview {
+	position: relative;
+	display: inline-block;
+	width: 60px;
+	margin: 0.5em; 
+}
+.imguruploader-preview-ctx .dz-details {
+	display: none;
+}
+.imguruploader-preview-ctx .dz-preview .dz-progress {
+	display: block;
+	height: 5px;
+	background: #eee;
+}
+.imguruploader-preview-ctx .dz-preview .dz-progress .dz-upload {
+	display: block;
+	height: 100%;
+	width: 0;
+	background: #144a99; 
+}
+.imguruploader-preview-ctx .dz-preview .dz-error-message {
+	color: red;
+	display: none; 
+}
+.imguruploader-preview-ctx .dz-preview.dz-error .dz-error-message, .imguruploader-preview-ctx .dz-preview.dz-error .dz-error-mark {
+	display: block; 
+}
+.imguruploader-preview-ctx .dz-preview.dz-success .dz-success-mark {
+	display: block; 
+}
+.imguruploader-preview-ctx .dz-preview .dz-error-mark, .imguruploader-preview-ctx .dz-preview .dz-success-mark {
+	position: absolute;
+	display: none;
+	left: 30px;
+	top: 30px;
+	width: 54px;
+	height: 58px;
+	left: 50%;
+	margin-left: -27px; 
+}
+
+#Form_Body.dz-drag-hover {
+	background: #eee url(drophere.png) no-repeat center;
+}
+
+#Form_Body[disabled] {
+	background: #eee url(loading.gif) no-repeat center;
+}
+
+.Button.ButtonAddImages {
+	margin-right: 5px;
+}
