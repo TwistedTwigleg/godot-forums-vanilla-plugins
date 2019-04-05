@@ -3,88 +3,100 @@ span.MItem.Category
     display: none
 }
 
+div.CategoryLabelContainer
+{
+	float: left;
+	display: flex;
+	height: 64px;
+	min-height: 64px;
+	width: 64px;
+	margin-top:  -10px;
+	margin-left: -15px;
+	margin-right: 10px;
+	margin-bottom: -15px;
+    /* padding-left: inherit;
+	padding-right: inherit; */
+	padding-top: inherit;
+	padding-bottom: inherit;
+    
+}
 a.CategoryLabel
 {
-    float: left;
-    
-    height: 40px;
-    width: 68px;
-    text-align: center;
+	width: inherit;
+	text-align: center;
     color: white;
-    font-size: 10px;
+	font-weight: bold;
+    font-size: 8px;
+	word-spacing: 64px;
     
-    line-height: 14px;
-    display: flex;
-    overflow-wrap: break-word;
-    
-    margin-right: 4px;
-    padding-left: 4px;
-    padding-right: 4px;
-    
-    background-color: #333f67;
-}
+	line-height: normal;
+	overflow-wrap: break-word;
 	
-a.CategoryLabel[id="General Chat"]
-{
-	background-color: #464545;
+	margin: auto;
 }
-a.CategoryLabel[id="User Groups"]
-{
-	background-color: #8ac6ff;
-}
-a.CategoryLabel[id="Professional Trade"]
-{
-	background-color: #ac7f42;
-}
-a.CategoryLabel[id="Projects"]
-{
-	background-color: #553374;
-}
-a.CategoryLabel[id="Resources"]
-{
-	background-color: #451c36;
-}
-a.CategoryLabel[id="Tutorials"]
-{
-	background-color: #8d4e76;
-}
-a.CategoryLabel[id="Design"], &[id="Art & Design"]
-{
-	background-color: #b30f4b;
-}
-a.CategoryLabel[id="Audio"]
-{
-	background-color: #d3aa39;
-}
-a.CategoryLabel[id="GUI"]
-{
-	background-color: #589f60;
-}
-a.CategoryLabel[id="2D"], a.CategoryLabel[id="3D"]
-{
-	background-color: #223688;
-}
-a.CategoryLabel[id="Programming"], a.CategoryLabel[id="Shaders"]
-{
-	background-color: #0b6655;
-}
-a.CategoryLabel[id="Exporting"]
-{
-	background-color: #154f72;
-}
-a.CategoryLabel[id="Forum Chat"]
-{
-	background-color: #546a79;
-}
-a.CategoryLabel[id="Archival"], a.CategoryLabel[id="Moderation"], a.CategoryLabel[id="Spam"]
-{
-	background-color: #5c1e1e;
-}
-
-
 a.CategoryLabel center
 {
 	align-self: center;
 	text-align: center;
+	text-transform: uppercase;
 	width: 100%;
+}
+	
+/* Specific overrides */
+
+div.CategoryLabelContainer[id="General Chat"]
+{
+	background-color: #464545;
+}
+div.CategoryLabelContainer[id="User Groups"]
+{
+	background-color: #8ac6ff;
+}
+div.CategoryLabelContainer[id="Professional Trade"]
+{
+	background-color: #ac7f42;
+}
+div.CategoryLabelContainer[id="Projects"]
+{
+	background-color: #553374;
+}
+div.CategoryLabelContainer[id="Resources"]
+{
+	background-color: #451c36;
+}
+div.CategoryLabelContainer[id="Tutorials"]
+{
+	background-color: #8d4e76;
+}
+div.CategoryLabelContainer[id="Design"], div.CategoryLabelContainer[id="Art & Design"]
+{
+	background-color: #b30f4b;
+}
+div.CategoryLabelContainer[id="Audio"]
+{
+	background-color: #d3aa39;
+}
+div.CategoryLabelContainer[id="GUI"]
+{
+	background-color: #589f60;
+}
+div.CategoryLabelContainer[id="2D"], div.CategoryLabelContainer[id="3D"]
+{
+	background-color: #223688;
+}
+div.CategoryLabelContainer[id="Programming"], div.CategoryLabelContainer[id="Shaders"]
+{
+	background-color: #0b6655;
+}
+div.CategoryLabelContainer[id="Exporting"]
+{
+	background-color: #154f72;
+}
+div.CategoryLabelContainer[id="Forum Chat"]
+{
+	background-color: #546a79;
+}
+div.CategoryLabelContainer[id="Archival"], div.CategoryLabelContainer[id="Moderation"], div.CategoryLabelContainer[id="Spam"]
+{
+	background-color: #5c1e1e;
 }
