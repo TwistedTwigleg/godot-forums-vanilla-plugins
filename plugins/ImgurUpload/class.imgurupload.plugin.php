@@ -13,7 +13,7 @@
 // Define the plugin:
 $PluginInfo['ImgurUpload'] = array(
 	'Description' => 'Adds an image upload feature (with drag and drop!) that utilises the Imgur API',
-	'Version' => '1.1.13',
+	'Version' => '1.1.14',
 	'RequiredApplications' => array('Vanilla' => '2.4'),
 	'RequiredTheme' => FALSE,
 	'RequiredPlugins' => FALSE,
@@ -21,7 +21,7 @@ $PluginInfo['ImgurUpload'] = array(
 	'MobileFriendly' => TRUE,
 	'SettingsUrl' => '/settings/ImgurUpload',
 	'SettingsPermission' => 'Garden.Settings.Manage',
-	'Author' => "James Ducker",
+	'Author' => "James Ducker (With modifications by the Godot community forums team)",
 	'AuthorEmail' => 'james.ducker@gmail.com',
 	'AuthorUrl' => 'https://github.com/jamesinc',
 	'License' => 'GPL-3.0'

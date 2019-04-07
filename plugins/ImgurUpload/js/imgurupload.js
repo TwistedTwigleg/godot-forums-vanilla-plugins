@@ -31,7 +31,29 @@
 		var sel, startPos, endPos;
 
 		text = text + '\n';
-
+        
+        // WYSIWYG Editor needs its HTML injected differently than the others.
+        // This is because its InputBox is within a IFrame.
+        var editor_type = $( "#Form_Format" ).val().toLowerCase();
+        if (editor_type == "wysiwyg")
+        {
+            // We can get the correct sandbox by taking advantage of EL's parent being the editor whose button/dropzone was trigger.
+            var editor_sandboxes = el.parentElement.getElementsByClassName("wysihtml5-sandbox");
+            if (editor_sandboxes.length > 0)
+            {
+                // Get the HTML document embeded in the sandbox and then get the InputBox itself.
+                var editor_content_document = editor_sandboxes[0].contentDocument || editor_sandboxes[0].contentWindow.document;
+                var editor_inputbox = editor_content_document.getElementsByClassName("InputBox TextBox");
+                if (editor_inputbox.length > 0)
+                {
+                    // Unfortunately, I don't quite know how to get the caret position just yet.
+                    // For now, just add the images to the end of the text box.
+                    editor_inputbox[0].insertAdjacentHTML("beforeend", text);
+                }
+            }
+            return;
+        }
+        
 		//IE support
 		if ( document.selection ) {
 
@@ -49,7 +71,6 @@
 		} else {
 
 			el.value += text;
-
 		}
 
 	};
@@ -89,7 +110,34 @@
 				}
 
 				break;
+                
+            case "wysiwyg":
+                // Same as HTML, with added <center></center> tags
+				if ( resize ) {
+					response = '<center><a href="' + url + '" target="_new"><img src="' + thumbnail + '" alt="" /></a></center>';
+				} else {
+					response = '<center><img src="' + url + '" alt="" width="' + data.width + '" height="' + data.height + '" style="padding: 12px 12px /></center>';
+				}
+                break;
 
+            // NOTE: The code below is for the new Vanilla Rich post editor. It does not work, unfortunately.
+            // Leaving this here as a reference in case we want to tackle making the Imgur plugin with Rich Editor again.
+            /*
+            case "rich":
+                
+                response = '<div class="js-embed embedResponsive" contenteditable="false">';
+                response += '<div class="embedExternal embedImage">';
+                response += '<div class="embed-focusableElement embedExternal-content" aria-label="External embed content - image">';
+                response += '<a class="embedImage-link" href="' + url + '" rel="nofollow noopener" target="_blank">';
+                response += '<img class="embedImage-img" src="' + url + '" alt="Embeded image">';
+                response += '</a>';
+                response += '</div>';
+                response += '</div>';
+                response += '</div>';
+                
+                break;
+            */
+                
 			default :
 				response = url;
 				break;
@@ -207,6 +255,7 @@
 
 			if ( dzIdx > -1 ) {
 
+                /*
 				// Handle users pasting image data straight from the clipboard
 				ta.on( "paste", function ( e ) {
 
@@ -225,6 +274,7 @@
 					}
 
 				});
+                */
 
 			}
 
