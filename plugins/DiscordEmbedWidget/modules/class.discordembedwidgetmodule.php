@@ -19,8 +19,6 @@ class DiscordEmbedWidgetModule extends Gdn_Module
 		
 		if ($Session->IsValid())
 		{
-			//$Selected = $user_module->GetUserMeta($Session->UserID, 'Discord_Embed_Widget_Enabled', false);
-			
 			// How to show all data stored in meta data:
 			//$All_User_Meta_Data = $user_module->GetUserMeta($Session->UserID, '%', false);
 			//var_dump($All_User_Meta_Data);

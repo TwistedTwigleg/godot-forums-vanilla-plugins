@@ -8,8 +8,8 @@ $PluginInfo['DiscussionCategoryStyleExtended'] = array(
     'RequiredTheme' => false,
     'HasLocale' => false,
     'License' => 'MIT',
-    'Author' => "Original by Noah Beard",
-    'AuthorUrl' => 'RandomMomentania.com'
+    'Author' => "Created for the Godot community forums",
+    'AuthorUrl' => 'https://github.com/TwistedTwigleg/godot-forums-vanilla-plugins'
 );
 
 
