@@ -1,0 +1,84 @@
+/*
+ This file is part of Mediator
+
+ Mediator is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Foobar is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Mediator. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+center.Youtube {
+	max-height: 80px;
+	overflow: hidden;
+	margin: auto;
+	-webkit-transition: max-height .5s;
+	-moz-transition: max-height .5s;
+	-ms-transition: max-height .5s;
+	-o-transition: max-height .5s;
+	transition: max-height .5s;
+	background-color: black;
+}
+
+center.Youtube div.lazyload {
+	background-repeat: no-repeat;
+	position: relative;
+	box-shadow: #888 0px 0px 2px;
+	-moz-box-shadow: #888 0px 0px 2px;
+	-webkit-box-shadow: #888 0px 0px 2px;
+	color: white;
+	font: 16px arial;
+	cursor: pointer;
+}
+
+center.Youtube div.lazyload div.yt-title {
+	width: 100%;
+	text-align: left;
+	padding: 5px 11px;
+	background: rgba(0, 0, 0, .8);
+}
+center.Youtube div.lazyload div.yt-title a {
+	color: white;
+	font: 16px arial;
+}
+center.Youtube div.lazyload div.yt-button {
+	background: url(https://ssl.gstatic.com/s2/tt/images/play-overlay.png) no-repeat center center;
+	position: relative;
+	width: 77px;
+	height: 77px;
+	top: 125px;
+	opacity: .6;
+	-webkit-transition: opacity .5s;
+	-moz-transition: opacity .5s;
+	-ms-transition: opacity .5s;
+	-o-transition: opacity .5s;
+	transition: opacity .5s;
+}
+center.Youtube div.lazyload div.yt-button:hover {
+	opacity: .9;
+}
+
+center.Bandcamp iframe {
+	display: block;
+	box-shadow: #888 0px 0px 2px;
+	-moz-box-shadow: #888 0px 0px 2px;
+	-webkit-box-shadow: #888 0px 0px 2px;
+}
+
+center.BCtrack iframe {
+	width: 400px;
+	height: 100px;
+}
+
+center.BCalbum iframe {
+	width: 300px;
+	height: 410px;
+	padding: 4px;
+}
