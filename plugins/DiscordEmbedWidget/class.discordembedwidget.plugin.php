@@ -69,7 +69,7 @@ class DiscordEmbedWidgetPlugin extends Gdn_Plugin
 	// User preference dropdown for theme selection on "Edit Profile" page.
     public function ProfileController_EditMyAccountAfter_Handler($Sender) {
         $Session = Gdn::Session();
-		$Selected = $this->GetUserMeta($Session->UserID, 'Discord_Embed_Widget_Enabled', true, true);
+		$Selected = $this->GetUserMeta($Session->UserID, 'Discord_Embed_Widget_Enabled', false, true);
 		
 		if ($Selected == true)
 		{
