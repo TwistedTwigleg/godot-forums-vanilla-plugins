@@ -48,6 +48,36 @@ class SearchModel extends Gdn_Model
 			}
 		}
 		
+		// TwistedTwigleg note:
+		//			Any data we need to query to get, it must be done *before* we build the final SQL query.
+		//			So in this case, we have to get the UserID we are searching with BEFORE we build the query
+		// ADV_Filter: Username Setup: Get UserID from Username
+		$ADV_Filter_Username_ID = null;
+		if (array_key_exists("ADV_Filter_Username", $AdvanceParams) == true)
+		{
+			$Filter_Username = $AdvanceParams["ADV_Filter_Username"];
+			if (!empty($Filter_Username))
+			{
+				try
+				{
+					$ADV_Filter_Username_ID = Gdn::userModel()->getByUsername($Filter_Username);
+				}
+				catch (Exeception $e)
+				{
+					// Something went wrong (probably no user with that name)
+					$ADV_Filter_Username_ID = null;
+				}
+				
+				// If ADV_Filter_Username_ID is still empty, then either there is no user with the inputted
+				// username, or some unknown error. Either way, abort the search!
+				if (empty($ADV_Filter_Username_ID))
+				{
+					return array();
+				}
+			}
+		}
+		
+		
 		// The SQL query will always need the following as the beginning, regardless of which filter(s) are applied.
 		$SQL_Query = Gdn::sql();
 		$SQL_Query->reset();
@@ -131,20 +161,9 @@ class SearchModel extends Gdn_Model
 		// ADV_Filter: Username
 		if (array_key_exists("ADV_Filter_Username", $AdvanceParams) == true)
 		{
-			$Filter_Username = $AdvanceParams["ADV_Filter_Username"];
-			if (!empty($Filter_Username))
+			if (!empty($ADV_Filter_Username_ID) == true)
 			{
-				$Filter_Username_ID = Gdn::userModel()->getByUsername($Filter_Username);
-				if (empty($Filter_Username_ID) == true)
-				{
-					// If the username does not exist, then return nothing.
-					// TODO: Decide whether this should be kept or not...
-					return array();
-				}
-				else
-				{
-					$SQL_Query->where('gdn_comment.InsertUserID', $Filter_Username_ID->UserID);
-				}
+				$SQL_Query->where('gdn_comment.InsertUserID', $ADV_Filter_Username_ID->UserID);
 			}
 		}
 		
