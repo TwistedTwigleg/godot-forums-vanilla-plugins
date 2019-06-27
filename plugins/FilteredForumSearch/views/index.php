@@ -14,22 +14,22 @@
 
 	// Variables for answered dropdown
 	$AnswerDropdownOptions = array(
-				'' => ('All Discussions and Questions'),
-				'Answered' => ('Only Answered Questions'),
-				'Accepted' => ('Only Accepted Questions'),
-				'Unanswered' => ('Only Unanswered Questions'),
-				'No_QA' => ('Only Discussions (No Questions)'),
-				'Only_QA' => ('Only Questions (No Discussions)'));
+				'' => 'All Discussions and Questions',
+				'Answered' => 'Only Answered Questions',
+				'Accepted' => 'Only Accepted Questions',
+				'Unanswered' => 'Only Unanswered Questions',
+				'No_QA' => 'Only Discussions (No Questions)',
+				'Only_QA' => 'Only Questions (No Discussions)');
 	$AnswerDropdownFields = array('TextField' => 'Text', 'ValueField' => 'Code', 'Value' => $ADV_Filter_SearchedQNA);
 
 	// Variables for post count dropdown
 	$CommentCountDropdownOptions = array(
-				'' => ('All Discussions'),
-				'over_zero' => ('Only Over 0 comments/replies'),
-				'over_one' => ('Only Over 1 comments/replies'),
-				'over_two' => ('Only Over 2 comments/replies'),
-				'over_five' => ('Only Over 5 comments/replies'),
-				'over_ten' => ('Only Over 10 comments/replies'));
+				'' => 'All Discussions',
+				'over_zero' => 'Only Over 0 comments/replies',
+				'over_one' => 'Only Over 1 comments/replies',
+				'over_two' => 'Only Over 2 comments/replies',
+				'over_five' => 'Only Over 5 comments/replies',
+				'over_ten' => 'Only Over 10 comments/replies');
 	$CommentCountDropdownFields = array('TextField' => 'Text', 'ValueField' => 'Code', 'Value' => $ADV_Filter_SearchedCommentCount);
 
 
@@ -100,11 +100,11 @@
 	{
 		if (empty($this->SearchTerm))
 		{
-			echo '<p class="NoResults">', 'Input text and/or a Username to search.', '</p>';
+			echo '<p class="NoResults">', Gdn::translate('Input text and/or a Username to search.'), '</p>';
 		}
 		else
 		{
-			echo '<p class="NoResults">', sprintf(T('No results for %s.', 'No results for <b>%s</b>.'), htmlspecialchars($this->SearchTerm)), '</p>';
+			echo '<p class="NoResults">', sprintf(Gdn::translate('No results for %s.', 'No results for <b>%s</b>.'), htmlspecialchars($this->SearchTerm)), '</p>';
 		}
 	}
 	else

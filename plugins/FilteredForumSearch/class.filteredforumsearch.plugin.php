@@ -22,7 +22,7 @@
 $PluginInfo['FilteredForumSearch'] = array(
     'Name' => 'Filtered Forum Search',
     'Description' => 'Adds additional filters to search with.',
-    'Version' => '2.0.1',
+    'Version' => '2.0.2',
     'RequiredApplications' => array('Vanilla' => '2.4'),
     'RequiredTheme' => FALSE,
     'RequiredPlugins' => array ('QnA' => '1.4'),
@@ -39,9 +39,10 @@ class FilteredForumSearchPlugin extends Gdn_Plugin {
     // Overridden Index method of SearchController.php to retrieve category to search into from the form data
     // and to call the overridden model's search() function with the added $CategoryFilter variable
     //
-    public function SearchController_Index_Create($Sender, $Page = '') {
+    public function SearchController_Index_Create($Sender, $Page = '')
+	{
         $Sender->AddJsFile('search.js');
-        $Sender->Title(T('Search'));
+        $Sender->Title(Gdn::translate('Search'));
 
         SaveToConfig('Garden.Format.EmbedSize', '160x90', FALSE);
 
@@ -51,9 +52,11 @@ class FilteredForumSearchPlugin extends Gdn_Plugin {
         $Search = $Sender->Form->GetFormValue('Search');
         $Mode = $Sender->Form->GetFormValue('Mode');
 		
-		// TwistedTwigleg note: Need to look at and probably redo the majority of this file.
+		// TwistedTwigleg note:
+		//		Need to look at this file! Looked at most of it and it looks good, just need to
+		//		double check a few things.
 		//
-		// NOTE: Send any/all additional advance filter data in a single array
+		// Send all additional advance filter data in a single array
 		$AdvanceParams = array();
 		$AdvanceParams["ADV_Filter_Category"] = $Sender->Form->GetFormValue('ADV_Filter_Category');
 		$AdvanceParams["ADV_Filter_QNA"] = $Sender->Form->GetFormValue('ADV_Filter_QNA');
@@ -90,6 +93,8 @@ class FilteredForumSearchPlugin extends Gdn_Plugin {
         if ($NumResults == $Offset + $Limit)
             $NumResults++;
 
+		// TwistedTwigleg note:
+		//		Not needed anymore? Will need to investigate...
         // Build a pager
         $PagerFactory = new Gdn_PagerFactory();
         $Sender->Pager = $PagerFactory->GetPager('MorePager', $Sender);
@@ -107,18 +112,20 @@ class FilteredForumSearchPlugin extends Gdn_Plugin {
 
         $Sender->Render();
     }
+
         
     // This is needed to override searchmodel.php with local copy
-    public function Gdn_Dispatcher_BeforeDispatch_Handler($Sender) {
+    public function Gdn_Dispatcher_BeforeDispatch_Handler($Sender)
+	{
         require_once 'plugins/FilteredForumSearch/class.searchmodel.php';
     }
 
+
     // Intercept render_before to render custom view instead of original forum/search?xx page
-    //
     public function SearchController_Render_Before($Sender) {
         
-        $Sender->AddCssFile($this->GetResource('views/dashboard/search/style.css', FALSE, FALSE));
-        $Sender->AddJsFile($this->GetResource('js/searchcategory.js', FALSE, FALSE));
+        $Sender->AddCssFile($this->GetResource('views/style.css', FALSE, FALSE));
+        //$Sender->AddJsFile($this->GetResource('js/searchcategory.js', FALSE, FALSE));
 
         $View = 'dashboard/search/index.php';
         $ThemeView = CombinePaths(array(PATH_THEMES, $Sender->Theme, strtolower($this->GetPluginFolder(false)), $View));
@@ -126,15 +133,12 @@ class FilteredForumSearchPlugin extends Gdn_Plugin {
         if (file_exists($ThemeView))
         {
             $Sender->View = $ThemeView;
-        } else {
-            $Sender->View = $this->GetView($View);
         }
-    }
-
-    // Try to inject the search for category filter here (WHERE clause?)
-    //
-    public function SearchModel_Search_Handler($Sender) {
-    
+		else
+		{
+            $Result = $Sender->fetchViewLocation('index', '', 'plugins/FilteredForumSearch');			
+			$Sender->View = $Result;
+        }
     }
 }
 
