@@ -195,7 +195,10 @@ class SearchModel extends Gdn_Model
 			
 			$Ret_Val["Format"] = $Value['Format'];
 			$Ret_Val["CategoryID"] = $Value["Discussion_CategoryID"];
-			$Ret_Val["Url"] = "/discussion/comment/{$Value["CommentID"]}#Comment_{$Value["CommentID"]}";
+			
+			$Comment_Model = new CommentModel();
+			$Comment_ID = $Comment_Model->GetID($Value["CommentID"]);
+			$Ret_Val["Url"] = commentUrl($Comment_ID, $withDomain=true);
 			
 			$Ret_Val["DateInserted"] = $Value['DateInserted'];
 			$Ret_Val["UserID"] = $Value['InsertUserID'];
