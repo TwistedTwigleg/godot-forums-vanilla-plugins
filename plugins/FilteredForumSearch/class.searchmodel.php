@@ -215,9 +215,7 @@ class SearchModel extends Gdn_Model
 		
 		// *************************************
 		
-		// Finally, make sure the search text inputted is being used as the search, that the
-		// query searches from newest to oldest, and only returns 20 results.
-		//$SQL_Query->like('gdn_comment.Body', $Search);
+		// Finally, make sure that the query searches from newest to oldest, and only returns 20 results.
 		$SQL_Query->orderBy('gdn_comment.DateInserted', 'desc');
 		$SQL_Query->limit($Limit, $Offset);
 		
