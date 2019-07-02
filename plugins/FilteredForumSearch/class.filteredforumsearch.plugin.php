@@ -125,8 +125,7 @@ class FilteredForumSearchPlugin extends Gdn_Plugin {
     // Intercept render_before to render custom view instead of original forum/search?xx page
     public function SearchController_Render_Before($Sender) {
         
-        //$Sender->AddCssFile($this->GetResource('views/style.css', FALSE, FALSE));
-		$Sender->AddCssFile('style.css', 'plugins/FilteredForumSearch');
+        $Sender->AddCssFile('style.css', 'plugins/FilteredForumSearch');
 
         $View = 'dashboard/search/index.php';
         $ThemeView = CombinePaths(array(PATH_THEMES, $Sender->Theme, strtolower($this->GetPluginFolder(false)), $View));
