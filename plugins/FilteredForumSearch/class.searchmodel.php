@@ -167,11 +167,57 @@ class SearchModel extends Gdn_Model
 			}
 		}
 		
+		// ADV_Filter: SearchIn
+		//
+		// TwistedTwigleg note:
+		//		I'm not sure if the LIKE SQL command needs to be last, but when I was writing the plugin using
+		//		direct SQL queries, it worked best if the like command was the last command WHERE command passed.
+		//
+		if (array_key_exists("ADV_Filter_SearchIn", $AdvanceParams) == true)
+		{
+			$Filter_SearchIn = $AdvanceParams["ADV_Filter_SearchIn"];
+			if (!empty($Filter_SearchIn))
+			{
+				if ($Filter_SearchIn == "only_text")
+				{
+					// Search only by discussion text
+					$SQL_Query->like('gdn_comment.Body', $Search);
+				}
+				else if ($Filter_SearchIn == "only_title")
+				{
+					// Search by discussion title
+					$SQL_Query->like('gdn_discussion.Name', $Search);
+				}
+				else
+				{
+					// If for some reason the data passed isn't what we expect, then just search normally using the default filter.
+					$SQL_Query->like('gdn_comment.Body', $Search);
+					$SQL_Query->Orlike('gdn_discussion.Name', $Search);
+				}
+			}
+			else
+			{
+				// If the filter is empty, then search using both the contents of the discussion and the title.
+				$SQL_Query->beginWhereGroup();
+				$SQL_Query->like('gdn_comment.Body', $Search);
+				$SQL_Query->Orlike('gdn_discussion.Name', $Search);
+				$SQL_Query->endWhereGroup();
+			}
+		}
+		else
+		{
+			// If no filter has been set, search using both the contents of the discussion and the title.
+			$SQL_Query->beginWhereGroup();
+			$SQL_Query->like('gdn_comment.Body', $Search);
+			$SQL_Query->Orlike('gdn_discussion.Name', $Search);
+			$SQL_Query->endWhereGroup();
+		}
+		
 		// *************************************
 		
 		// Finally, make sure the search text inputted is being used as the search, that the
 		// query searches from newest to oldest, and only returns 20 results.
-		$SQL_Query->like('gdn_comment.Body', $Search);
+		//$SQL_Query->like('gdn_comment.Body', $Search);
 		$SQL_Query->orderBy('gdn_comment.DateInserted', 'desc');
 		$SQL_Query->limit($Limit, $Offset);
 		
