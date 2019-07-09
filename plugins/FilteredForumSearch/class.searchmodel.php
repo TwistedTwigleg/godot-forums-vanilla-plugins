@@ -191,13 +191,13 @@ class SearchModel extends Gdn_Model
 		}
 		
 		
-		// ADV_Filter: SearchOccurance
+		// ADV_Filter: SearchOccurrence
 		// TwistedTwigleg note:
 		//				Not perfect, but it does do a better job of returning any results that contain the keywords
 		//				instead of results that ONLY contain the keyword.
-		if (array_key_exists("ADV_Filter_SearchOccurance", $AdvanceParams) == true)
+		if (array_key_exists("ADV_Filter_SearchOccurrence", $AdvanceParams) == true)
 		{
-			$Filter_SearchOccurance = $AdvanceParams["ADV_Filter_SearchOccurance"];
+			$Filter_SearchOccurance = $AdvanceParams["ADV_Filter_SearchOccurrence"];
 			if (!empty($Filter_SearchOccurance))
 			{
 				// Only search for the exact search term:
@@ -205,64 +205,64 @@ class SearchModel extends Gdn_Model
 				{
 					if ($SQL_Query_Search_Mode == "MATCH")
 					{
-						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_MATCH($SQL_Query_Search_Text, true);
+						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_MATCH($SQL_Query_Search_Text, true);
 					}
 					else if ($SQL_Query_Search_Mode == "LIKE")
 					{
-						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_LIKE($SQL_Query_Search_Text, true);
+						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text, true);
 					}
 				}
-				// Search for any occurance of the inputted search term(s):
-				else if ($Filter_SearchOccurance == "any_occurance")
+				// Search for any occurrence of the inputted search term(s):
+				else if ($Filter_SearchOccurance == "any_occurrence")
 				{
 					if ($SQL_Query_Search_Mode == "MATCH")
 					{
-						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_MATCH($SQL_Query_Search_Text, false);
+						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_MATCH($SQL_Query_Search_Text, false);
 					}
 					else if ($SQL_Query_Search_Mode == "LIKE")
 					{
-						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_LIKE($SQL_Query_Search_Text, false);
+						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text, false);
 					}
 				}
-				// Use whatever the default is for searching, if an unknown SearchOccurance filter is passed.
-				// (as of when this was written, it is the same as 'any occurance')
+				// Use whatever the default is for searching, if an unknown SearchOccurrence filter is passed.
+				// (as of when this was written, it is the same as 'any occurrence')
 				else
 				{
 					if ($SQL_Query_Search_Mode == "MATCH")
 					{
-						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_MATCH($SQL_Query_Search_Text);
+						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_MATCH($SQL_Query_Search_Text);
 					}
 					else if ($SQL_Query_Search_Mode == "LIKE")
 					{
-						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_LIKE($SQL_Query_Search_Text);
+						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text);
 					}
 				}
 			}
-			// If the SearchOccurance filter is empty, then use whatever the default for the format function.
-			// (as of when this was written, it is the same as 'any occurance')
+			// If the SearchOccurrence filter is empty, then use whatever the default for the format function.
+			// (as of when this was written, it is the same as 'any occurrence')
 			else
 			{
 				if ($SQL_Query_Search_Mode == "MATCH")
 				{
-					$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_MATCH($SQL_Query_Search_Text);
+					$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_MATCH($SQL_Query_Search_Text);
 				}
 				else if ($SQL_Query_Search_Mode == "LIKE")
 				{
-					$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_LIKE($SQL_Query_Search_Text);
+					$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text);
 				}
 			}
 		}
-		// If there is no SearchOccurance filter in the array, then use whatever the default for the format function.
-		// (as of when this was written, it is the same as 'any occurance')
+		// If there is no SearchOccurrence filter in the array, then use whatever the default for the format function.
+		// (as of when this was written, it is the same as 'any occurrence')
 		else
 		{
 			if ($SQL_Query_Search_Mode == "MATCH")
 			{
-				$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_MATCH($SQL_Query_Search_Text);
+				$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_MATCH($SQL_Query_Search_Text);
 			}
 			else if ($SQL_Query_Search_Mode == "LIKE")
 			{
-				$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_LIKE($SQL_Query_Search_Text);
+				$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text);
 			}
 		}
 		
@@ -395,7 +395,7 @@ class SearchModel extends Gdn_Model
 	
 	// Both of the functions below are helper functions for the SearchOccurance filter!
 	// Edits the search so it is formatted and ready to be used in a SQL LIKE query.
-	public function SQL_Filter_SearchOccurance_Format_LIKE($Search_Text, $Format_Search_For_Exact=false)
+	public function SQL_Filter_SearchOccurrence_Format_LIKE($Search_Text, $Format_Search_For_Exact=false)
 	{
 		if ($Format_Search_For_Exact == false)
 		{
@@ -417,7 +417,7 @@ class SearchModel extends Gdn_Model
 		return $Search_Text;
 	}
 	// Edits the search so it is formatted and ready to be used in a SQL MATCH AGAINST query.
-	public function SQL_Filter_SearchOccurance_Format_MATCH($Search_Text, $Format_Search_For_Exact=false)
+	public function SQL_Filter_SearchOccurrence_Format_MATCH($Search_Text, $Format_Search_For_Exact=false)
 	{	
 		if ($Format_Search_For_Exact == false)
 		{

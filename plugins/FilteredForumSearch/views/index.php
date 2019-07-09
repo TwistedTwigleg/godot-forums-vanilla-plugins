@@ -11,7 +11,7 @@
 	$ADV_Filter_SearchedCategory=$Form->GetFormValue('ADV_Filter_Category');
 	$ADV_Filter_SearchedQNA=$Form->GetFormValue('ADV_Filter_QNA');
 	$ADV_Filter_SearchedCommentCount=$Form->GetFormValue('ADV_Filter_CommentCount');
-	$ADV_Filter_SearchedExact=$Form->GetFormValue('ADV_Filter_SearchOccurance');
+	$ADV_Filter_SearchedOccurrence=$Form->GetFormValue('ADV_Filter_SearchOccurrence');
 
 
 	// Variables for discussion/title searching
@@ -42,10 +42,10 @@
 	$CommentCountDropdownFields = array('TextField' => 'Text', 'ValueField' => 'Code', 'Value' => $ADV_Filter_SearchedCommentCount);
 	
 	// Variables for occurance dropdown searching
-	$SearchOccuranceDropdownOptions = array(
-				'any_occurance' => 'Return all occurances',
-				'exact_only' => Gdn::translate('Return only exact occurances'));
-	$SearchOccuranceDropdownFields = array('TextField' => 'Text', 'ValueField' => 'Code', 'Value' => $ADV_Filter_SearchedExact);
+	$SearchOccurrenceDropdownOptions = array(
+				'any_occurrence' => 'Return all occurrences',
+				'exact_only' => Gdn::translate('Return only exact occurrences'));
+	$SearchOccurrenceDropdownFields = array('TextField' => 'Text', 'ValueField' => 'Code', 'Value' => $ADV_Filter_SearchedOccurrence);
 
 
 	echo  
@@ -98,9 +98,9 @@
 		'</div>',
 		
 		// Search occurance dropdown
-		'<div class="SearchOccuranceDropdown">',
-		$Form->Label('Filter by occurance', 'ADV_Filter_SearchOccurance'), ' ',
-		$Form->DropDown('ADV_Filter_SearchOccurance', $SearchOccuranceDropdownOptions, $SearchOccuranceDropdownFields).
+		'<div class="SearchOccurrenceDropdown">',
+		$Form->Label('Filter by occurrence', 'ADV_Filter_SearchOccurrence'), ' ',
+		$Form->DropDown('ADV_Filter_SearchOccurrence', $SearchOccurrenceDropdownOptions, $SearchOccurrenceDropdownFields).
 		'</div>',
 		
 		'<div class="SearchNote">',
