@@ -22,7 +22,7 @@
 $PluginInfo['FilteredForumSearch'] = array(
     'Name' => 'Filtered Forum Search',
     'Description' => 'Adds additional filters to search with.',
-    'Version' => '2.1.0',
+    'Version' => '2.2.0',
     'RequiredApplications' => array('Vanilla' => '2.4'),
     'RequiredTheme' => FALSE,
     'RequiredPlugins' => array ('QnA' => '1.4'),
