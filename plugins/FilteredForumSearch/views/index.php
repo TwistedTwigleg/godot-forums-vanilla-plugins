@@ -11,6 +11,7 @@
 	$ADV_Filter_SearchedCategory=$Form->GetFormValue('ADV_Filter_Category');
 	$ADV_Filter_SearchedQNA=$Form->GetFormValue('ADV_Filter_QNA');
 	$ADV_Filter_SearchedCommentCount=$Form->GetFormValue('ADV_Filter_CommentCount');
+	$ADV_Filter_SearchedExact=$Form->GetFormValue('ADV_Filter_SearchOccurance');
 
 
 	// Variables for discussion/title searching
@@ -22,23 +23,29 @@
 
 	// Variables for answered dropdown
 	$AnswerDropdownOptions = array(
-				'' => Gdn::translate('All Discussions and Questions'),
-				'Answered' => Gdn::translate('Only Answered Questions'),
-				'Accepted' => Gdn::translate('Only Accepted Questions'),
-				'Unanswered' => Gdn::translate('Only Unanswered Questions'),
-				'No_QA' => Gdn::translate('Only Discussions (No Questions)'),
-				'Only_QA' => Gdn::translate('Only Questions (No Discussions)'));
+				'' => Gdn::translate('All discussions and questions'),
+				'Answered' => Gdn::translate('Only answered questions'),
+				'Accepted' => Gdn::translate('Only accepted questions'),
+				'Unanswered' => Gdn::translate('Only unanswered questions'),
+				'No_QA' => Gdn::translate('Only discussions (no questions)'),
+				'Only_QA' => Gdn::translate('Only questions (no discussions)'));
 	$AnswerDropdownFields = array('TextField' => 'Text', 'ValueField' => 'Code', 'Value' => $ADV_Filter_SearchedQNA);
 
 	// Variables for post count dropdown
 	$CommentCountDropdownOptions = array(
 				'' => 'All Discussions',
-				'over_zero' => Gdn::translate('Only Over 0 comments/replies'),
-				'over_one' => Gdn::translate('Only Over 1 comments/replies'),
-				'over_two' => Gdn::translate('Only Over 2 comments/replies'),
-				'over_five' => Gdn::translate('Only Over 5 comments/replies'),
-				'over_ten' => Gdn::translate('Only Over 10 comments/replies'));
+				'over_zero' => Gdn::translate('Only over 0 comments/replies'),
+				'over_one' => Gdn::translate('Only over 1 comments/replies'),
+				'over_two' => Gdn::translate('Only over 2 comments/replies'),
+				'over_five' => Gdn::translate('Only over 5 comments/replies'),
+				'over_ten' => Gdn::translate('Only over 10 comments/replies'));
 	$CommentCountDropdownFields = array('TextField' => 'Text', 'ValueField' => 'Code', 'Value' => $ADV_Filter_SearchedCommentCount);
+	
+	// Variables for occurance dropdown searching
+	$SearchOccuranceDropdownOptions = array(
+				'any_occurance' => 'Return all occurances',
+				'exact_only' => Gdn::translate('Return only exact occurances'));
+	$SearchOccuranceDropdownFields = array('TextField' => 'Text', 'ValueField' => 'Code', 'Value' => $ADV_Filter_SearchedExact);
 
 
 	echo  
@@ -46,8 +53,7 @@
 		
 		// Search input
 		'<div class="SiteSearch">',
-		$Form->Label('Search Text', 'Search'),
-		$Form->TextBox('Search'),
+		$Form->TextBox('Search', array('placeholder' => Gdn::translate("Search"))),
 		$Form->Button('Search', array('Name' => '')),
 		'</div>',
 		
@@ -88,7 +94,13 @@
 		// Username input
 		'<div class="SearchUsername">',
 		$Form->Label('Filter by Username (case sensitive)', 'ADV_Filter_Username'), ' ',
-		$Form->TextBox('ADV_Filter_Username'),
+		$Form->TextBox('ADV_Filter_Username', array('placeholder' => Gdn::translate("Username"))),
+		'</div>',
+		
+		// Search occurance dropdown
+		'<div class="SearchOccuranceDropdown">',
+		$Form->Label('Filter by occurance', 'ADV_Filter_SearchOccurance'), ' ',
+		$Form->DropDown('ADV_Filter_SearchOccurance', $SearchOccuranceDropdownOptions, $SearchOccuranceDropdownFields).
 		'</div>',
 		
 		'<div class="SearchNote">',

@@ -20,6 +20,7 @@
 
 class SearchModel extends Gdn_Model
 {	
+	
 	public function Search($Search, $Offset = 0, $Limit = 20, $AdvanceParams = array())
 	{
 	  
@@ -87,8 +88,27 @@ class SearchModel extends Gdn_Model
 		$SQL_Query->from('Comment gdn_comment');
 		$SQL_Query->join('Discussion gdn_discussion', 'gdn_comment.DiscussionID = gdn_discussion.DiscussionID');
 		
+		
+		// Add variables/conditions needed across multiple filters here!
+		// *************************************
+		// Variables for storing which type of SQL query will be made based on the inputted text, and a variable to hold
+		// the search text so it can be modified without modifying the passed in $search variable.
+		$SQL_Query_Search_Mode = "LIKE";
+		$SQL_Query_Search_Text = $Search;
+		// Determine which mode the search will use based on the length of the inputted search text
+		if (strlen($SQL_Query_Search_Text) > 4)
+		{
+			$SQL_Query_Search_Mode = "MATCH";
+		}
+		else
+		{
+			$SQL_Query_Search_Mode = "LIKE";
+		}
+		
+		
 		// Add filters here!
 		// *************************************
+		
 		
 		// ADV_Filter: Category
 		if (array_key_exists("ADV_Filter_Category", $AdvanceParams) == true)
@@ -99,6 +119,7 @@ class SearchModel extends Gdn_Model
 				$SQL_Query->where('gdn_discussion.CategoryID', $Filter_Category);
 			}
 		}
+		
 		
 		// ADV_Filter: Answer
 		if (array_key_exists("ADV_Filter_QNA", $AdvanceParams) == true)
@@ -129,6 +150,7 @@ class SearchModel extends Gdn_Model
 			}
 		}
 		
+		
 		// ADV_Filter: Comment Count
 		if (array_key_exists("ADV_Filter_CommentCount", $AdvanceParams) == true)
 		{
@@ -158,6 +180,7 @@ class SearchModel extends Gdn_Model
 			}
 		}
 		
+		
 		// ADV_Filter: Username
 		if (array_key_exists("ADV_Filter_Username", $AdvanceParams) == true)
 		{
@@ -167,50 +190,164 @@ class SearchModel extends Gdn_Model
 			}
 		}
 		
+		
+		// ADV_Filter: SearchOccurance
+		// TwistedTwigleg note:
+		//				Not perfect, but it does do a better job of returning any results that contain the keywords
+		//				instead of results that ONLY contain the keyword.
+		if (array_key_exists("ADV_Filter_SearchOccurance", $AdvanceParams) == true)
+		{
+			$Filter_SearchOccurance = $AdvanceParams["ADV_Filter_SearchOccurance"];
+			if (!empty($Filter_SearchOccurance))
+			{
+				// Only search for the exact search term:
+				if ($Filter_SearchOccurance == "exact_only")
+				{
+					if ($SQL_Query_Search_Mode == "MATCH")
+					{
+						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_MATCH($SQL_Query_Search_Text, true);
+					}
+					else if ($SQL_Query_Search_Mode == "LIKE")
+					{
+						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_LIKE($SQL_Query_Search_Text, true);
+					}
+				}
+				// Search for any occurance of the inputted search term(s):
+				else if ($Filter_SearchOccurance == "any_occurance")
+				{
+					if ($SQL_Query_Search_Mode == "MATCH")
+					{
+						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_MATCH($SQL_Query_Search_Text, false);
+					}
+					else if ($SQL_Query_Search_Mode == "LIKE")
+					{
+						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_LIKE($SQL_Query_Search_Text, false);
+					}
+				}
+				// Use whatever the default is for searching, if an unknown SearchOccurance filter is passed.
+				// (as of when this was written, it is the same as 'any occurance')
+				else
+				{
+					if ($SQL_Query_Search_Mode == "MATCH")
+					{
+						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_MATCH($SQL_Query_Search_Text);
+					}
+					else if ($SQL_Query_Search_Mode == "LIKE")
+					{
+						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_LIKE($SQL_Query_Search_Text);
+					}
+				}
+			}
+			// If the SearchOccurance filter is empty, then use whatever the default for the format function.
+			// (as of when this was written, it is the same as 'any occurance')
+			else
+			{
+				if ($SQL_Query_Search_Mode == "MATCH")
+				{
+					$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_MATCH($SQL_Query_Search_Text);
+				}
+				else if ($SQL_Query_Search_Mode == "LIKE")
+				{
+					$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_LIKE($SQL_Query_Search_Text);
+				}
+			}
+		}
+		// If there is no SearchOccurance filter in the array, then use whatever the default for the format function.
+		// (as of when this was written, it is the same as 'any occurance')
+		else
+		{
+			if ($SQL_Query_Search_Mode == "MATCH")
+			{
+				$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_MATCH($SQL_Query_Search_Text);
+			}
+			else if ($SQL_Query_Search_Mode == "LIKE")
+			{
+				$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurance_Format_LIKE($SQL_Query_Search_Text);
+			}
+		}
+		
+		
 		// ADV_Filter: SearchIn
 		//
 		// TwistedTwigleg note:
-		//		I'm not sure if the LIKE SQL command needs to be last, but when I was writing the plugin using
-		//		direct SQL queries, it worked best if the like command was the last command WHERE command passed.
+		//		I'm not sure if the LIKE/MATCH-AGAINST SQL command needs to be last, but when I was writing the plugin using
+		//		direct SQL queries, it worked best if the LIKE/MATCH-AGAINST command was the last command passed.
 		//
 		if (array_key_exists("ADV_Filter_SearchIn", $AdvanceParams) == true)
 		{
 			$Filter_SearchIn = $AdvanceParams["ADV_Filter_SearchIn"];
 			if (!empty($Filter_SearchIn))
 			{
+				// Search only by discussion text
 				if ($Filter_SearchIn == "only_text")
 				{
-					// Search only by discussion text
-					$SQL_Query->like('gdn_comment.Body', $Search);
+					if ($SQL_Query_Search_Mode == "MATCH")
+					{
+						$SQL_Query->where("MATCH(gdn_comment.Body) AGAINST('{$SQL_Query_Search_Text}' IN BOOLEAN MODE)", null, false, false);
+					}
+					else if ($SQL_Query_Search_Mode == "LIKE")
+					{
+						$SQL_Query->like('gdn_comment.Body', $SQL_Query_Search_Text);
+					}
 				}
+				// Search only by discussion title
 				else if ($Filter_SearchIn == "only_title")
 				{
-					// Search by discussion title
-					$SQL_Query->like('gdn_discussion.Name', $Search);
+					if ($SQL_Query_Search_Mode == "MATCH")
+					{
+						$SQL_Query->where("MATCH(gdn_discussion.Name) AGAINST('{$SQL_Query_Search_Text}' IN BOOLEAN MODE)", null, false, false);
+					}
+					else if ($SQL_Query_Search_Mode == "LIKE")
+					{
+						$SQL_Query->like('gdn_discussion.Name', $SQL_Query_Search_Text);
+					}
 				}
+				// If for some reason the SearchIn filter passed is an unknown value, search in both the discussion title and text.
 				else
 				{
-					// If for some reason the data passed isn't what we expect, then just search normally using the default filter.
-					$SQL_Query->like('gdn_comment.Body', $Search);
-					$SQL_Query->Orlike('gdn_discussion.Name', $Search);
+					if ($SQL_Query_Search_Mode == "MATCH")
+					{
+						$SQL_Query->where("MATCH(gdn_discussion.Name, gdn_comment.Body) AGAINST('{$SQL_Query_Search_Text}' IN BOOLEAN MODE)", null, false, false);
+					}
+					else if ($SQL_Query_Search_Mode == "LIKE")
+					{
+						$SQL_Query->beginWhereGroup();
+						$SQL_Query->like('gdn_comment.Body', $SQL_Query_Search_Text);
+						$SQL_Query->Orlike('gdn_discussion.Name', $SQL_Query_Search_Text);
+						$SQL_Query->endWhereGroup();
+					}
 				}
 			}
+			// If the SearchIn filter passed is empty, search in both the discussion title and text.
 			else
 			{
-				// If the filter is empty, then search using both the contents of the discussion and the title.
-				$SQL_Query->beginWhereGroup();
-				$SQL_Query->like('gdn_comment.Body', $Search);
-				$SQL_Query->Orlike('gdn_discussion.Name', $Search);
-				$SQL_Query->endWhereGroup();
+				if ($SQL_Query_Search_Mode == "MATCH")
+				{
+					$SQL_Query->where("MATCH(gdn_discussion.Name, gdn_comment.Body) AGAINST('{$SQL_Query_Search_Text}' IN BOOLEAN MODE)", null, false, false);
+				}
+				else if ($SQL_Query_Search_Mode == "LIKE")
+				{
+					$SQL_Query->beginWhereGroup();
+					$SQL_Query->like('gdn_comment.Body', $SQL_Query_Search_Text);
+					$SQL_Query->Orlike('gdn_discussion.Name', $SQL_Query_Search_Text);
+					$SQL_Query->endWhereGroup();
+				}
 			}
 		}
+		// If the SearchIn filter is not within the array, search in both the discussion title and text.
 		else
 		{
-			// If no filter has been set, search using both the contents of the discussion and the title.
-			$SQL_Query->beginWhereGroup();
-			$SQL_Query->like('gdn_comment.Body', $Search);
-			$SQL_Query->Orlike('gdn_discussion.Name', $Search);
-			$SQL_Query->endWhereGroup();
+			if ($SQL_Query_Search_Mode == "MATCH")
+			{
+				$SQL_Query->where("MATCH(gdn_discussion.Name, gdn_comment.Body) AGAINST('{$SQL_Query_Search_Text}' IN BOOLEAN MODE)", null, false, false);
+			}
+			else if ($SQL_Query_Search_Mode == "LIKE")
+			{
+				$SQL_Query->beginWhereGroup();
+				$SQL_Query->like('gdn_comment.Body', $SQL_Query_Search_Text);
+				$SQL_Query->Orlike('gdn_discussion.Name', $SQL_Query_Search_Text);
+				$SQL_Query->endWhereGroup();
+			}
 		}
 		
 		// *************************************
@@ -252,6 +389,53 @@ class SearchModel extends Gdn_Model
 
 		return $Result;
 		
+	}
+	
+	
+	
+	// Both of the functions below are helper functions for the SearchOccurance filter!
+	// Edits the search so it is formatted and ready to be used in a SQL LIKE query.
+	public function SQL_Filter_SearchOccurance_Format_LIKE($Search_Text, $Format_Search_For_Exact=false)
+	{
+		if ($Format_Search_For_Exact == false)
+		{
+			// Search for all occurances of the word(s) inputted (akin to Google search)
+			// We can do this by splitting the terms by space, adding at the beginning and end of each term.
+			// It is not perfect, but it's better than nothing.
+			$Search_Terms = explode(' ', $Search_Text);
+			$Search_Text = '';
+			foreach ($Search_Terms as $Key => $Value)
+			{
+				$Search_Text = '%'.$Search_Text.$Value.'%';
+			}
+		}
+		else
+		{
+			// Do nothing!
+		}
+		
+		return $Search_Text;
+	}
+	// Edits the search so it is formatted and ready to be used in a SQL MATCH AGAINST query.
+	public function SQL_Filter_SearchOccurance_Format_MATCH($Search_Text, $Format_Search_For_Exact=false)
+	{	
+		if ($Format_Search_For_Exact == false)
+		{
+			// Search for all occurances of the word(s) inputted (akin to Google search)
+			// We can do this by splitting the terms by space, adding ',' between each term.
+			$Search_Terms = explode(' ', $Search_Text);
+			$Search_Text = '';
+			foreach ($Search_Terms as $Key => $Value)
+			{
+				$Search_Text = $Search_Text.$Value.',';
+			}
+		}
+		else
+		{
+			$Search_Text = '"'.$Search_Text.'"';
+		}
+		
+		return $Search_Text;
 	}
 	
 }
