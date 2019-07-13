@@ -22,7 +22,7 @@
 $PluginInfo['FilteredForumSearch'] = array(
     'Name' => 'Filtered Forum Search',
     'Description' => 'Adds additional filters to search with.',
-    'Version' => '2.1.0',
+    'Version' => '2.2.0',
     'RequiredApplications' => array('Vanilla' => '2.4'),
     'RequiredTheme' => FALSE,
     'RequiredPlugins' => array ('QnA' => '1.4'),
@@ -63,6 +63,7 @@ class FilteredForumSearchPlugin extends Gdn_Plugin {
 		$AdvanceParams["ADV_Filter_QNA"] = $Sender->Form->GetFormValue('ADV_Filter_QNA');
 		$AdvanceParams["ADV_Filter_CommentCount"] = $Sender->Form->GetFormValue('ADV_Filter_CommentCount');
 		$AdvanceParams["ADV_Filter_Username"] = $Sender->Form->GetFormValue('ADV_Filter_Username');
+		$AdvanceParams["ADV_Filter_SearchOccurrence"] = $Sender->Form->GetFormValue('ADV_Filter_SearchOccurrence');
 
         if ($Mode)
             $Sender->SearchModel->ForceSearchMode = $Mode;
@@ -123,8 +124,10 @@ class FilteredForumSearchPlugin extends Gdn_Plugin {
 
 
     // Intercept render_before to render custom view instead of original forum/search?xx page
-    public function SearchController_Render_Before($Sender) {
-        
+    public function SearchController_Render_Before($Sender)
+	{
+		Gdn_Theme::section('SearchResults');
+		
         //$Sender->AddCssFile($this->GetResource('views/style.css', FALSE, FALSE));
 		$Sender->AddCssFile('style.css', 'plugins/FilteredForumSearch');
 
