@@ -93,18 +93,12 @@ class SearchModel extends Gdn_Model
 		// *************************************
 		// Variables for storing which type of SQL query will be made based on the inputted text, and a variable to hold
 		// the search text so it can be modified without modifying the passed in $search variable.
+		
+		// These variables allow for expanding the SQL search queries in the future. This was added for
+		// "MATCH ... AGAINST ..." SQL queries, but the results were not ideal. Maybe in the future an alternative
+		// to "LIKE" will be added.
 		$SQL_Query_Search_Mode = "LIKE";
 		$SQL_Query_Search_Text = $Search;
-		// Determine which mode the search will use based on the length of the inputted search text
-		if (strlen($SQL_Query_Search_Text) > 4)
-		{
-			$SQL_Query_Search_Mode = "MATCH";
-		}
-		else
-		{
-			$SQL_Query_Search_Mode = "LIKE";
-		}
-		
 		
 		// Add filters here!
 		// *************************************
@@ -203,11 +197,7 @@ class SearchModel extends Gdn_Model
 				// Only search for the exact search term:
 				if ($Filter_SearchOccurance == "exact_only")
 				{
-					if ($SQL_Query_Search_Mode == "MATCH")
-					{
-						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_MATCH($SQL_Query_Search_Text, true);
-					}
-					else if ($SQL_Query_Search_Mode == "LIKE")
+					if ($SQL_Query_Search_Mode == "LIKE")
 					{
 						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text, true);
 					}
@@ -215,11 +205,7 @@ class SearchModel extends Gdn_Model
 				// Search for any occurrence of the inputted search term(s):
 				else if ($Filter_SearchOccurance == "any_occurrence")
 				{
-					if ($SQL_Query_Search_Mode == "MATCH")
-					{
-						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_MATCH($SQL_Query_Search_Text, false);
-					}
-					else if ($SQL_Query_Search_Mode == "LIKE")
+					if ($SQL_Query_Search_Mode == "LIKE")
 					{
 						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text, false);
 					}
@@ -228,11 +214,7 @@ class SearchModel extends Gdn_Model
 				// (as of when this was written, it is the same as 'any occurrence')
 				else
 				{
-					if ($SQL_Query_Search_Mode == "MATCH")
-					{
-						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_MATCH($SQL_Query_Search_Text);
-					}
-					else if ($SQL_Query_Search_Mode == "LIKE")
+					if ($SQL_Query_Search_Mode == "LIKE")
 					{
 						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text);
 					}
@@ -242,11 +224,7 @@ class SearchModel extends Gdn_Model
 			// (as of when this was written, it is the same as 'any occurrence')
 			else
 			{
-				if ($SQL_Query_Search_Mode == "MATCH")
-				{
-					$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_MATCH($SQL_Query_Search_Text);
-				}
-				else if ($SQL_Query_Search_Mode == "LIKE")
+				if ($SQL_Query_Search_Mode == "LIKE")
 				{
 					$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text);
 				}
@@ -256,11 +234,7 @@ class SearchModel extends Gdn_Model
 		// (as of when this was written, it is the same as 'any occurrence')
 		else
 		{
-			if ($SQL_Query_Search_Mode == "MATCH")
-			{
-				$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_MATCH($SQL_Query_Search_Text);
-			}
-			else if ($SQL_Query_Search_Mode == "LIKE")
+			if ($SQL_Query_Search_Mode == "LIKE")
 			{
 				$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text);
 			}
@@ -281,11 +255,7 @@ class SearchModel extends Gdn_Model
 				// Search only by discussion text
 				if ($Filter_SearchIn == "only_text")
 				{
-					if ($SQL_Query_Search_Mode == "MATCH")
-					{
-						$SQL_Query->where("MATCH(gdn_comment.Body) AGAINST('{$SQL_Query_Search_Text}' IN BOOLEAN MODE)", null, false, false);
-					}
-					else if ($SQL_Query_Search_Mode == "LIKE")
+					if ($SQL_Query_Search_Mode == "LIKE")
 					{
 						$SQL_Query->like('gdn_comment.Body', $SQL_Query_Search_Text);
 					}
@@ -293,11 +263,7 @@ class SearchModel extends Gdn_Model
 				// Search only by discussion title
 				else if ($Filter_SearchIn == "only_title")
 				{
-					if ($SQL_Query_Search_Mode == "MATCH")
-					{
-						$SQL_Query->where("MATCH(gdn_discussion.Name) AGAINST('{$SQL_Query_Search_Text}' IN BOOLEAN MODE)", null, false, false);
-					}
-					else if ($SQL_Query_Search_Mode == "LIKE")
+					if ($SQL_Query_Search_Mode == "LIKE")
 					{
 						$SQL_Query->like('gdn_discussion.Name', $SQL_Query_Search_Text);
 					}
@@ -305,11 +271,7 @@ class SearchModel extends Gdn_Model
 				// If for some reason the SearchIn filter passed is an unknown value, search in both the discussion title and text.
 				else
 				{
-					if ($SQL_Query_Search_Mode == "MATCH")
-					{
-						$SQL_Query->where("MATCH(gdn_discussion.Name, gdn_comment.Body) AGAINST('{$SQL_Query_Search_Text}' IN BOOLEAN MODE)", null, false, false);
-					}
-					else if ($SQL_Query_Search_Mode == "LIKE")
+					if ($SQL_Query_Search_Mode == "LIKE")
 					{
 						$SQL_Query->beginWhereGroup();
 						$SQL_Query->like('gdn_comment.Body', $SQL_Query_Search_Text);
@@ -321,11 +283,7 @@ class SearchModel extends Gdn_Model
 			// If the SearchIn filter passed is empty, search in both the discussion title and text.
 			else
 			{
-				if ($SQL_Query_Search_Mode == "MATCH")
-				{
-					$SQL_Query->where("MATCH(gdn_discussion.Name, gdn_comment.Body) AGAINST('{$SQL_Query_Search_Text}' IN BOOLEAN MODE)", null, false, false);
-				}
-				else if ($SQL_Query_Search_Mode == "LIKE")
+				if ($SQL_Query_Search_Mode == "LIKE")
 				{
 					$SQL_Query->beginWhereGroup();
 					$SQL_Query->like('gdn_comment.Body', $SQL_Query_Search_Text);
@@ -337,11 +295,7 @@ class SearchModel extends Gdn_Model
 		// If the SearchIn filter is not within the array, search in both the discussion title and text.
 		else
 		{
-			if ($SQL_Query_Search_Mode == "MATCH")
-			{
-				$SQL_Query->where("MATCH(gdn_discussion.Name, gdn_comment.Body) AGAINST('{$SQL_Query_Search_Text}' IN BOOLEAN MODE)", null, false, false);
-			}
-			else if ($SQL_Query_Search_Mode == "LIKE")
+			if ($SQL_Query_Search_Mode == "LIKE")
 			{
 				$SQL_Query->beginWhereGroup();
 				$SQL_Query->like('gdn_comment.Body', $SQL_Query_Search_Text);
@@ -393,13 +347,13 @@ class SearchModel extends Gdn_Model
 	
 	
 	
-	// Both of the functions below are helper functions for the SearchOccurance filter!
 	// Edits the search so it is formatted and ready to be used in a SQL LIKE query.
+	// Allows for multiple search terms, breaks terms up using spaces (" ")
 	public function SQL_Filter_SearchOccurrence_Format_LIKE($Search_Text, $Format_Search_For_Exact=false)
 	{
 		if ($Format_Search_For_Exact == false)
 		{
-			// Search for all occurances of the word(s) inputted (akin to Google search)
+			// Search for all occurrences of the word(s) inputted (akin to Google search)
 			// We can do this by splitting the terms by space, adding at the beginning and end of each term.
 			// It is not perfect, but it's better than nothing.
 			$Search_Terms = explode(' ', $Search_Text);
@@ -412,27 +366,6 @@ class SearchModel extends Gdn_Model
 		else
 		{
 			// Do nothing!
-		}
-		
-		return $Search_Text;
-	}
-	// Edits the search so it is formatted and ready to be used in a SQL MATCH AGAINST query.
-	public function SQL_Filter_SearchOccurrence_Format_MATCH($Search_Text, $Format_Search_For_Exact=false)
-	{	
-		if ($Format_Search_For_Exact == false)
-		{
-			// Search for all occurances of the word(s) inputted (akin to Google search)
-			// We can do this by splitting the terms by space, adding ',' between each term.
-			$Search_Terms = explode(' ', $Search_Text);
-			$Search_Text = '';
-			foreach ($Search_Terms as $Key => $Value)
-			{
-				$Search_Text = $Search_Text.$Value.',';
-			}
-		}
-		else
-		{
-			$Search_Text = '"'.$Search_Text.'"';
 		}
 		
 		return $Search_Text;
