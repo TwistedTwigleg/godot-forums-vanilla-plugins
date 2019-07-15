@@ -6,6 +6,12 @@
 	$Form = $this->Form;
 	$Form->InputPrefix = '';
 
+	
+	// WORKS
+	//var_dump(Gdn::session()->isValid());
+	
+	//var_dump(Gdn::session()->User);
+
 
 	$ADV_Filter_SearchedSearchIn=$Form->GetFormValue('ADV_Filter_SearchIn');
 	$ADV_Filter_SearchedCategory=$Form->GetFormValue('ADV_Filter_Category');
@@ -76,6 +82,14 @@
 		'<div class="SearchCategoryDropdown">',
 		$Form->Label(Gdn::translate('Filter by Category'), 'ADV_Filter_Category'), ' ',
 		$Form->CategoryDropDown('ADV_Filter_Category', array('Value' => $ADV_Filter_SearchedCategory, 'IncludeNull' => true)).
+		
+		// NOTE: only return discussion types that this user can see, instead of returning ALL of them
+		//$permissionCategory = CategoryModel::permissionCategory($this->CategoryID);
+		//$discussionTypes = CategoryModel::allowedDiscussionTypes($permissionCategory, isset($category) ? $category : []);
+		//$Form->CategoryDropDown('ADV_Filter_Category', array('Value' => $ADV_Filter_SearchedCategory, 'IncludeNull' => true, 'PermFilter'=> ['AllowedDiscussionTypes' => $discussionTypes])).
+		
+		// END OF NOTE
+		
 		'</div>',
 		
 		// Q&A dropdown
