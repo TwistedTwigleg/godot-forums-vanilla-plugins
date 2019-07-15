@@ -40,8 +40,7 @@ class FilteredForumSearchPlugin extends Gdn_Plugin {
     // and to call the overridden model's search() function with the added $CategoryFilter variable
     //
     public function SearchController_Index_Create($Sender, $Page = '')
-	{
-        $Sender->AddJsFile('search.js');
+	{	
         $Sender->Title(Gdn::translate('Search'));
 
         SaveToConfig('Garden.Format.EmbedSize', '160x90', FALSE);
@@ -95,21 +94,6 @@ class FilteredForumSearchPlugin extends Gdn_Plugin {
         if ($NumResults == $Offset + $Limit)
             $NumResults++;
 
-		// TwistedTwigleg note:
-		//		Not needed anymore? Will need to investigate...
-        // Build a pager
-        $PagerFactory = new Gdn_PagerFactory();
-        $Sender->Pager = $PagerFactory->GetPager('MorePager', $Sender);
-        $Sender->Pager->MoreCode = 'More Results';
-        $Sender->Pager->LessCode = 'Previous Results';
-        $Sender->Pager->ClientID = 'Pager';
-        $Sender->Pager->Configure(
-            $Offset,
-            $Limit,
-            $NumResults,
-            'dashboard/search/%1$s/%2$s/?Search='.Gdn_Format::Url($Search)
-        );
-
         $Sender->CanonicalUrl(Url('search', TRUE));
 
         $Sender->Render();
@@ -128,8 +112,10 @@ class FilteredForumSearchPlugin extends Gdn_Plugin {
 	{
 		Gdn_Theme::section('SearchResults');
 		
-        //$Sender->AddCssFile($this->GetResource('views/style.css', FALSE, FALSE));
-		$Sender->AddCssFile('style.css', 'plugins/FilteredForumSearch');
+		// TwistedTwigleg note:
+		//		If you have a CSS file called search_style.css, you may need to change the name of this CSS file
+		//		so it is loaded correctly.
+        $Sender->AddCssFile('search_style.css', 'plugins/FilteredForumSearch');
 
         $View = 'dashboard/search/index.php';
         $ThemeView = CombinePaths(array(PATH_THEMES, $Sender->Theme, strtolower($this->GetPluginFolder(false)), $View));

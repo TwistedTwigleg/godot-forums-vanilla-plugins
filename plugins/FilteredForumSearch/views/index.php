@@ -16,7 +16,7 @@
 
 	// Variables for discussion/title searching
 	$SearchInDropdownOptions = array(
-				'' => 'Search in discussion contents and title',
+				'' => Gdn::translate('Search in discussion contents and title'),
 				'only_text' => Gdn::translate('Search in discussion contents'),
 				'only_title' => Gdn::translate('Search in discussion title'));
 	$SearchInDropdownFields = array('TextField' => 'Text', 'ValueField' => 'Code', 'Value' => $ADV_Filter_SearchedSearchIn);
@@ -33,7 +33,7 @@
 
 	// Variables for post count dropdown
 	$CommentCountDropdownOptions = array(
-				'' => 'All Discussions',
+				'' => Gdn::translate('All Discussions'),
 				'over_zero' => Gdn::translate('Only over 0 comments/replies'),
 				'over_one' => Gdn::translate('Only over 1 comments/replies'),
 				'over_two' => Gdn::translate('Only over 2 comments/replies'),
@@ -43,7 +43,7 @@
 	
 	// Variables for occurance dropdown searching
 	$SearchOccurrenceDropdownOptions = array(
-				'any_occurrence' => 'Return all occurrences',
+				'any_occurrence' => Gdn::translate('Return all occurrences'),
 				'exact_only' => Gdn::translate('Return only exact occurrences'));
 	$SearchOccurrenceDropdownFields = array('TextField' => 'Text', 'ValueField' => 'Code', 'Value' => $ADV_Filter_SearchedOccurrence);
 
@@ -54,7 +54,6 @@
 		// Search input
 		'<div class="SiteSearch">',
 		$Form->TextBox('Search', array('placeholder' => Gdn::translate("Search"))),
-		$Form->Button('Search', array('Name' => '')),
 		'</div>',
 		
 		'<br />',
@@ -69,47 +68,46 @@
 		
 		// SearchIn dropdown
 		'<div class="SearchInDropdown">',
-		$Form->Label('Filter search location', 'ADV_Filter_SearchIn'), ' ',
+		$Form->Label(Gdn::translate('Filter search location'), 'ADV_Filter_SearchIn'), ' ',
 		$Form->DropDown('ADV_Filter_SearchIn', $SearchInDropdownOptions, $SearchInDropdownFields).
 		'</div>',
 		
 		// Category dropdown (provided by SearchCategory plugin code!)
 		'<div class="SearchCategoryDropdown">',
-		$Form->Label('Filter by Category', 'ADV_Filter_Category'), ' ',
+		$Form->Label(Gdn::translate('Filter by Category'), 'ADV_Filter_Category'), ' ',
 		$Form->CategoryDropDown('ADV_Filter_Category', array('Value' => $ADV_Filter_SearchedCategory, 'IncludeNull' => true)).
 		'</div>',
 		
 		// Q&A dropdown
 		'<div class="SearchAnswerDropdown">',
-		$Form->Label('Filter by Q&A', 'ADV_Filter_QNA'), ' ',
+		$Form->Label(Gdn::translate('Filter by Q&A'), 'ADV_Filter_QNA'), ' ',
 		$Form->DropDown('ADV_Filter_QNA', $AnswerDropdownOptions, $AnswerDropdownFields).
 		'</div>',
 		
 		// Comment count dropdown
 		'<div class="SearchCommentCountDropdown">',
-		$Form->Label('Filter by Comment Count', 'ADV_Filter_CommentCount'), ' ',
+		$Form->Label(Gdn::translate('Filter by Comment Count'), 'ADV_Filter_CommentCount'), ' ',
 		$Form->DropDown('ADV_Filter_CommentCount', $CommentCountDropdownOptions, $CommentCountDropdownFields).
 		'</div>',
 		
 		// Username input
 		'<div class="SearchUsername">',
-		$Form->Label('Filter by Username (case sensitive)', 'ADV_Filter_Username'), ' ',
+		$Form->Label(Gdn::translate('Filter by Username (case sensitive)'), 'ADV_Filter_Username'), ' ',
 		$Form->TextBox('ADV_Filter_Username', array('placeholder' => Gdn::translate("Username"))),
 		'</div>',
 		
-		// Search occurance dropdown
+		// Search occurrence dropdown
 		'<div class="SearchOccurrenceDropdown">',
-		$Form->Label('Filter by occurrence', 'ADV_Filter_SearchOccurrence'), ' ',
+		$Form->Label(Gdn::translate('Filter by occurrence'), 'ADV_Filter_SearchOccurrence'), ' ',
 		$Form->DropDown('ADV_Filter_SearchOccurrence', $SearchOccurrenceDropdownOptions, $SearchOccurrenceDropdownFields).
 		'</div>',
 		
-		'<div class="SearchNote">',
+		// Search button
 		'<br />',
-		'<center><h4>',
-		$Form->Label('Submit search to apply filter(s)', 'ADV_Search_Note'), ' ',
-		'</h4></center>',
+		'<center>',
+		'<button class="Button" type="Submit">'.Gdn::translate('Submit search with filter(s)').'</button>',
+		'</center>',
 		'<br />',
-		'</div>',
 		
 		// Close collapse div
 		'</div>',
