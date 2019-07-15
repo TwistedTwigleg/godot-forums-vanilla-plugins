@@ -30,6 +30,7 @@ class SearchModel extends Gdn_Model
 		//			https://docs.vanillaforums.com/developer/framework/database/
 		// 		for information on how to use SQL with Vanilla.
 		
+		
 		// If there is no search, and no advance parameters, then abort.
 		// This provides the same functionality as default Vanilla.
 		if (empty($Search) == true)
@@ -88,20 +89,67 @@ class SearchModel extends Gdn_Model
 		$SQL_Query->from('Comment gdn_comment');
 		$SQL_Query->join('Discussion gdn_discussion', 'gdn_comment.DiscussionID = gdn_discussion.DiscussionID');
 		
-		
 		// Add variables/conditions needed across multiple filters here!
 		// *************************************
+		
 		// Variables for storing which type of SQL query will be made based on the inputted text, and a variable to hold
 		// the search text so it can be modified without modifying the passed in $search variable.
-		
+		// 
 		// These variables allow for expanding the SQL search queries in the future. This was added for
 		// "MATCH ... AGAINST ..." SQL queries, but the results were not ideal. Maybe in the future an alternative
 		// to "LIKE" will be added.
 		$SQL_Query_Search_Mode = "LIKE";
 		$SQL_Query_Search_Text = $Search;
 		
+		
+		// Figure out which discussions this user is allowed to view, as we do not want to return results that the user would normally
+		// not be able to see or have access to!
+		// Without this, anyone can get results they do not have access to (like the Moderation board! Yikes!)
+		$session_user = Gdn::session()->User;
+		$all_categories = CategoryModel::categories();
+		$permitted_categories = array();
+		foreach ($all_categories as $Key => $Value)
+		{
+			// Check if the user should be able to view this category...
+			$hasPermission = Gdn::session()->checkPermission(
+				'Vanilla.Discussions.View',
+				true,
+				'Category',
+				$Value['PermissionCategoryID']
+			);
+			// If they can, then add it to the list. If they can not, then skip it!
+			if ($hasPermission == true)
+			{
+				$permitted_categories[] = $Value['CategoryID'];
+			}
+		}
+		/* This will export the arrays to the web page, which is helpful for debugging!
+		echo '<pre>' . var_export($session_user, true) . '</pre>'; // NOTE: Debug print helper
+		echo '<br /><pre>' . var_export($all_categories, true) . '</pre>'; // NOTE: Debug print helper
+		echo '<br /><pre>' . var_export($permitted_categories, true) . '</pre>'; // NOTE: Debug print helper
+		*/
+		
+		
 		// Add filters here!
 		// *************************************
+		
+		
+		// REQUIRED FILTER: Search only in discussions that the user (logged in or not) can view
+		$SQL_Query->beginWhereGroup();
+		$permitted_categories_first = true;
+		foreach ($permitted_categories as $Key => $Value)
+		{
+			if ($permitted_categories_first == true)
+			{
+				$SQL_Query->where('gdn_discussion.CategoryID', $Value);
+				$permitted_categories_first = false;
+			}
+			else
+			{
+				$SQL_Query->orWhere('gdn_discussion.CategoryID', $Value);
+			}
+		}
+		$SQL_Query->endWhereGroup();
 		
 		
 		// ADV_Filter: Category
