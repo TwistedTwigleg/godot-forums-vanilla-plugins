@@ -423,6 +423,7 @@
 		frame.prop('src', "data:text/html;charset=utf-8,<body><script src='" + ("https://gist.github.com" + url_id + ".js") + "'></script></body>");
 		frame.prop('style', "width: 100%; height: 100%; min-height: 150px");
 		frame.prop('allowfullscreen', "");
+		frame.prop('class', "github_gist_iframe");
 		frame[0].frameBorder = 0;
 		inner_div[0].appendChild(frame[0]);
 		
