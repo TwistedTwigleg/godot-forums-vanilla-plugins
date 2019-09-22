@@ -18,8 +18,8 @@
 
 $PluginInfo['Mediator'] = array(
 	'Name' => 'Mediator',
-	'Description' => 'Allows automatic embedding of media by converting media links to embed code. Supports Youtube, Vimeo, Imgur, Pastebin, Soundcloud [Bandcamp], Gyazo.',
-	'Version' => '0.3.18',
+	'Description' => 'Allows automatic embedding of media by converting media links to embed code. Supports Youtube, Vimeo, Imgur, Pastebin, Soundcloud [Bandcamp], Gyazo, GfyCat, GitHub-gist.',
+	'Version' => '0.4.18',
 	'Date' => '01 Feb 2012',
 	'Author' => 'Seon-Wook Park (extended by the Godot forums team)',
 	'AuthorEmail' => 'twistedtwigleg@randommomentania.com',

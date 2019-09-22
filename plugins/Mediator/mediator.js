@@ -133,11 +133,16 @@
 		if (urlo.host.match(/^bandcamp\.[^\.]+\.com$/i) || urlo.host.match(/^[^\.]+\.bandcamp\.com$/i)) {
 			return ReplaceBandcamp(url, elem, $elem);
 		}
-        
-        // Custom addition: GyfCat
-        if (urlo.host == 'gfycat.com' || urlo.host == 'www.gfycat.com') {
-            var url_id = urlo.path;
+		
+		// Custom addition: GyfCat
+		if (urlo.host == 'gfycat.com' || urlo.host == 'www.gfycat.com') {
+			var url_id = urlo.path;
 			return ReplaceGfyCat(url_id, elem, $elem);
+		}
+		// Custom addition: GitHub gist
+		if (urlo.host == 'gist.github.com' || urlo.host == 'www.gist.github.com') {
+			var url_id = urlo.path;
+			return ReplaceGitHubGist(url_id, elem, $elem);
 		}
         
 	}
@@ -360,19 +365,72 @@
 		});
 	}
     
-    function ReplaceGfyCat (url_id, elem, $elem) {
+	function ReplaceGfyCat (url_id, elem, $elem) {
 		var newel = $('<iframe>');
 		newel.prop('height', height);
 		newel.prop('src', 'https://gfycat.com/ifr'+ url_id + '?autoplay=0');
+
+		newel.prop('allowfullscreen', '');
+		newel.prop('frameborder', '0');
+		newel.prop('width', '100%');
+		newel.prop('scolling', 'no');
+
+		CommonSetting(newel, $elem, 'GfyCat');
+
+		$elem.replaceWith(newel);
+	}
+	
+	function ReplaceGitHubGist (url_id, elem, $elem) {
 		
-        newel.prop('allowfullscreen', '');
-        newel.prop('frameborder', '0');
-        newel.prop('width', '100%');
-        newel.prop('scolling', 'no');
-        
-        CommonSetting(newel, $elem, 'GfyCat');
+		// TwistedTwigleg note: While GitHub has a embeded that simply uses a <script> HTML tag, for some reason it does not work
+		// in Vanilla without being added to an iFrame. I wasn't able to find a way around it, with the solution below being the 
+		// best I could find... It is not ideal though. That said, after several hours of working, this was the best I could make.
 		
-        $elem.replaceWith(newel);
+		// Minimal Iframe GitHub gist example:
+		/*
+		var newel = $('<iframe>');
+		// Inspired by this GitHub gist iframe embed code
+		// https://gist.github.com/pixelitystudios/6d254e24b528838813d905f9c45fba81
+		newel.prop('src', "data:text/html;charset=utf-8,<body><script src='" + ("https://gist.github.com" + url_id + ".js") + "'></script></body>");
+		CommonSetting(newel, $elem, 'GitHubGist');
+		$elem.replaceWith(newel);
+		*/
+		
+		
+		// Make a div that can be resized based on the size of the GitHub gist.
+		var resize_div = $('<div>');
+		resize_div.prop('style', "overflow: hidden; resize: vertical; outline-width: thin; min-height: 200px; box-shadow: none");
+		
+		// Make the text (and link) that points to the GitHub gist URL.
+		var prelink_text = $('<p>');
+		prelink_text.prop('style', "margin: 0px;");
+		prelink_text[0].append("GitHub gist:");
+		// The actually link element
+		var link_text = $('<a>');
+		link_text.prop('href', ("https://gist.github.com" + url_id));
+		link_text[0].append(url_id);
+		prelink_text[0].appendChild(link_text[0])
+		resize_div[0].appendChild(prelink_text[0])
+		
+		// Used for additional padding to keep the drag margin on the bottom away from the resize button.
+		// It is not perfect though...
+		var inner_div = $('<div>');
+		inner_div.prop('style', "height: 100%; padding-bottom: 42px");
+		resize_div[0].appendChild(inner_div[0]);
+		
+		// Make the iFrame containing the GitHub gist:
+		var frame = $('<iframe>');
+		frame.prop('src', "data:text/html;charset=utf-8,<body><script src='" + ("https://gist.github.com" + url_id + ".js") + "'></script></body>");
+		frame.prop('style', "width: 100%; height: 100%; min-height: 150px");
+		frame.prop('allowfullscreen', "");
+		frame.prop('class', "github_gist_iframe");
+		frame[0].frameBorder = 0;
+		inner_div[0].appendChild(frame[0]);
+		
+		// Apply the resize_div
+		CommonSetting(resize_div, $elem, 'GitHubGist');
+		$elem.replaceWith(resize_div);
+		
 	}
     
 }(jQuery));
