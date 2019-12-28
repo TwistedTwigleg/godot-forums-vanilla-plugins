@@ -25,10 +25,10 @@ class SearchModel extends Gdn_Model
 	{
 	  
 		// TwistedTwigleg note:
-		//		See
-		//			https://docs.vanillaforums.com/developer/framework/datasets/
-		//			https://docs.vanillaforums.com/developer/framework/database/
-		// 		for information on how to use SQL with Vanilla.
+		//	See
+		//		https://docs.vanillaforums.com/developer/framework/datasets/
+		//		https://docs.vanillaforums.com/developer/framework/database/
+		// 	for information on how to use SQL with Vanilla.
 		
 		
 		// If there is no search, and no advance parameters, then abort.
@@ -38,12 +38,12 @@ class SearchModel extends Gdn_Model
 			// Check to see if a username not been set. If there is no username, then abort!
 			//
 			// TwistedTwigleg note:
-			//		The reason we are only checking the username is because
-			// 		a empty search with just a username allows users to check all of the posts made by
-			// 		a single user, which could be helpful.
-			//	
-			// 		However, we should abort for empty searches with category/QnA filters, because there
-			//		are already ways to filter that through other already installed plugins.
+			//	  The reason we are only checking the username is because
+			//    a empty search with just a username allows users to check all of the posts made by
+			// 	  a single user, which could be helpful.
+			//	  
+			// 	  However, we should abort for empty searches with category/QnA filters, because there
+			//	  are already ways to filter that through other already installed plugins.
 			if (empty($AdvanceParams["ADV_Filter_Username"]) == true)
 			{
 				return array();
@@ -51,8 +51,8 @@ class SearchModel extends Gdn_Model
 		}
 		
 		// TwistedTwigleg note:
-		//			Any data we need to query to get, it must be done *before* we build the final SQL query.
-		//			So in this case, we have to get the UserID we are searching with BEFORE we build the query
+		//	   Any data we need to query to get, it must be done *before* we build the final SQL query.
+		//	   So in this case, we have to get the UserID we are searching with BEFORE we build the query
 		// ADV_Filter: Username Setup: Get UserID from Username
 		$ADV_Filter_Username_ID = null;
 		if (array_key_exists("ADV_Filter_Username", $AdvanceParams) == true)
@@ -81,24 +81,24 @@ class SearchModel extends Gdn_Model
 		
 		
 		// The SQL query will always need the following as the beginning, regardless of which filter(s) are applied.
-		$SQL_Query = Gdn::sql();
+        $SQL_Query = Gdn::sql();
+        
+        $SQL_Query = Gdn::sql();
 		$SQL_Query->reset();
-		$SQL_Query->select('gdn_comment.*');
-		$SQL_Query->select('gdn_discussion.Name', '', 'Discussion_Name');
-		$SQL_Query->select('gdn_discussion.CategoryID', '', 'Discussion_CategoryID');
-		$SQL_Query->from('Comment gdn_comment');
-		$SQL_Query->join('Discussion gdn_discussion', 'gdn_comment.DiscussionID = gdn_discussion.DiscussionID');
-		
+        $SQL_Query->select("gdn_discussion.*");
+        // Get comment data AFTER getting the discussion data so comment data overrides discussion data with the same fields (which works for this case)
+		$SQL_Query->select("gdn_comment.*");
+        
+        // TwistedTwigleg note:
+        // Fixes issue where discussion title has to have a post in order to be searched. Not sure if it changes how search
+        // results act though. From my testing it does not seem to make any difference.
+        $SQL_Query->from('Discussion gdn_discussion');
+        $SQL_Query->join('Comment gdn_comment', 'gdn_discussion.DiscussionID = gdn_comment.DiscussionID', 'left');
+        
 		// Add variables/conditions needed across multiple filters here!
 		// *************************************
 		
-		// Variables for storing which type of SQL query will be made based on the inputted text, and a variable to hold
-		// the search text so it can be modified without modifying the passed in $search variable.
-		// 
-		// These variables allow for expanding the SQL search queries in the future. This was added for
-		// "MATCH ... AGAINST ..." SQL queries, but the results were not ideal. Maybe in the future an alternative
-		// to "LIKE" will be added.
-		$SQL_Query_Search_Mode = "LIKE";
+		// A variable to hold the search text so it can be modified without modifying the passed in $search variable.
 		$SQL_Query_Search_Text = $Search;
 		
 		
@@ -123,16 +123,17 @@ class SearchModel extends Gdn_Model
 				$permitted_categories[] = $Value['CategoryID'];
 			}
 		}
-		/* This will export the arrays to the web page, which is helpful for debugging!
-		echo '<pre>' . var_export($session_user, true) . '</pre>'; // NOTE: Debug print helper
-		echo '<br /><pre>' . var_export($all_categories, true) . '</pre>'; // NOTE: Debug print helper
-		echo '<br /><pre>' . var_export($permitted_categories, true) . '</pre>'; // NOTE: Debug print helper
-		*/
+		// This will export the user categories arrays to the web page, which can be helpful for debugging.
+        /*
+		echo '<pre>' . var_export($session_user, true) . '</pre>';
+		echo '<br /><pre>' . var_export($all_categories, true) . '</pre>';
+		echo '<br /><pre>' . var_export($permitted_categories, true) . '</pre>';
+        */
+		
 		
 		
 		// Add filters here!
 		// *************************************
-		
 		
 		// REQUIRED FILTER: Search only in discussions that the user (logged in or not) can view
 		$SQL_Query->beginWhereGroup();
@@ -163,34 +164,38 @@ class SearchModel extends Gdn_Model
 		}
 		
 		
-		// ADV_Filter: Answer
-		if (array_key_exists("ADV_Filter_QNA", $AdvanceParams) == true)
-		{
-			$Filter_Answer = $AdvanceParams["ADV_Filter_QNA"];
-			if (!empty($Filter_Answer))
-			{
-				if ($Filter_Answer == "Answered")
-				{
-					$SQL_Query->where('gdn_discussion.QnA', 'Answered');
-				}
-				else if ($Filter_Answer == "Accepted")
-				{
-					$SQL_Query->where('gdn_discussion.QnA', 'Accepted');
-				}
-				else if ($Filter_Answer == "Unanswered")
-				{
-					$SQL_Query->where('gdn_discussion.QnA', 'Unanswered');
-				}
-				else if ($Filter_Answer == "No_QA")
-				{
-					$SQL_Query->where('gdn_discussion.QnA IS NULL');
-				}
-				else if ($Filter_Answer == "Only_QA")
-				{
-					$SQL_Query->where('gdn_discussion.QnA IS NOT NULL');
-				}
-			}
-		}
+		// ADV_Filter: QnA Answer
+        // (Only works if QnA plugin is detected!)
+        if (class_exists('QnAPlugin'))
+        {
+            if (array_key_exists("ADV_Filter_QNA", $AdvanceParams) == true)
+            {
+                $Filter_Answer = $AdvanceParams["ADV_Filter_QNA"];
+                if (!empty($Filter_Answer))
+                {
+                    if ($Filter_Answer == "Answered")
+                    {
+                        $SQL_Query->where('gdn_discussion.QnA', 'Answered');
+                    }
+                    else if ($Filter_Answer == "Accepted")
+                    {
+                        $SQL_Query->where('gdn_discussion.QnA', 'Accepted');
+                    }
+                    else if ($Filter_Answer == "Unanswered")
+                    {
+                        $SQL_Query->where('gdn_discussion.QnA', 'Unanswered');
+                    }
+                    else if ($Filter_Answer == "No_QA")
+                    {
+                        $SQL_Query->where('gdn_discussion.QnA IS NULL');
+                    }
+                    else if ($Filter_Answer == "Only_QA")
+                    {
+                        $SQL_Query->where('gdn_discussion.QnA IS NOT NULL');
+                    }
+                }
+            }
+        }
 		
 		
 		// ADV_Filter: Comment Count
@@ -235,8 +240,10 @@ class SearchModel extends Gdn_Model
 		
 		// ADV_Filter: SearchOccurrence
 		// TwistedTwigleg note:
-		//				Not perfect, but it does do a better job of returning any results that contain the keywords
-		//				instead of results that ONLY contain the keyword.
+		//		Not perfect, but it does do a better job of returning any results that contain the keywords
+		//		instead of results that ONLY contain the keyword.
+        //
+        // TwistedTwigleg note 2: Probably should be removed or reworked.
 		if (array_key_exists("ADV_Filter_SearchOccurrence", $AdvanceParams) == true)
 		{
 			$Filter_SearchOccurance = $AdvanceParams["ADV_Filter_SearchOccurrence"];
@@ -245,56 +252,36 @@ class SearchModel extends Gdn_Model
 				// Only search for the exact search term:
 				if ($Filter_SearchOccurance == "exact_only")
 				{
-					if ($SQL_Query_Search_Mode == "LIKE")
-					{
-						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text, true);
-					}
+					$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text, true);
 				}
 				// Search for any occurrence of the inputted search term(s):
 				else if ($Filter_SearchOccurance == "any_occurrence")
 				{
-					if ($SQL_Query_Search_Mode == "LIKE")
-					{
-						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text, false);
-					}
+					$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text, false);
 				}
 				// Use whatever the default is for searching, if an unknown SearchOccurrence filter is passed.
 				// (as of when this was written, it is the same as 'any occurrence')
 				else
 				{
-					if ($SQL_Query_Search_Mode == "LIKE")
-					{
-						$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text);
-					}
+					$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text);
 				}
 			}
 			// If the SearchOccurrence filter is empty, then use whatever the default for the format function.
 			// (as of when this was written, it is the same as 'any occurrence')
 			else
 			{
-				if ($SQL_Query_Search_Mode == "LIKE")
-				{
-					$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text);
-				}
+				$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text);
 			}
 		}
 		// If there is no SearchOccurrence filter in the array, then use whatever the default for the format function.
 		// (as of when this was written, it is the same as 'any occurrence')
 		else
 		{
-			if ($SQL_Query_Search_Mode == "LIKE")
-			{
-				$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text);
-			}
+			$SQL_Query_Search_Text = $this->SQL_Filter_SearchOccurrence_Format_LIKE($SQL_Query_Search_Text);
 		}
 		
 		
 		// ADV_Filter: SearchIn
-		//
-		// TwistedTwigleg note:
-		//		I'm not sure if the LIKE/MATCH-AGAINST SQL command needs to be last, but when I was writing the plugin using
-		//		direct SQL queries, it worked best if the LIKE/MATCH-AGAINST command was the last command passed.
-		//
 		if (array_key_exists("ADV_Filter_SearchIn", $AdvanceParams) == true)
 		{
 			$Filter_SearchIn = $AdvanceParams["ADV_Filter_SearchIn"];
@@ -303,81 +290,73 @@ class SearchModel extends Gdn_Model
 				// Search only by discussion text
 				if ($Filter_SearchIn == "only_text")
 				{
-					if ($SQL_Query_Search_Mode == "LIKE")
-					{
-						$SQL_Query->like('gdn_comment.Body', $SQL_Query_Search_Text);
-					}
+					$SQL_Query->like('gdn_comment.Body', $SQL_Query_Search_Text);
 				}
 				// Search only by discussion title
 				else if ($Filter_SearchIn == "only_title")
 				{
-					if ($SQL_Query_Search_Mode == "LIKE")
-					{
-						$SQL_Query->like('gdn_discussion.Name', $SQL_Query_Search_Text);
-					}
+					$SQL_Query->like('gdn_discussion.Name', $SQL_Query_Search_Text);
 				}
 				// If for some reason the SearchIn filter passed is an unknown value, search in both the discussion title and text.
 				else
 				{
-					if ($SQL_Query_Search_Mode == "LIKE")
-					{
-						$SQL_Query->beginWhereGroup();
-						$SQL_Query->like('gdn_comment.Body', $SQL_Query_Search_Text);
-						$SQL_Query->Orlike('gdn_discussion.Name', $SQL_Query_Search_Text);
-						$SQL_Query->endWhereGroup();
-					}
+                    $SQL_Query->beginWhereGroup();
+					$SQL_Query->like('gdn_comment.Body', $SQL_Query_Search_Text);
+                    $SQL_Query->Orlike('gdn_discussion.Name', $SQL_Query_Search_Text);
+                    $SQL_Query->endWhereGroup();
 				}
 			}
 			// If the SearchIn filter passed is empty, search in both the discussion title and text.
+            // (This also happens when search in contents and title is true!)
 			else
 			{
-				if ($SQL_Query_Search_Mode == "LIKE")
-				{
-					$SQL_Query->beginWhereGroup();
-					$SQL_Query->like('gdn_comment.Body', $SQL_Query_Search_Text);
-					$SQL_Query->Orlike('gdn_discussion.Name', $SQL_Query_Search_Text);
-					$SQL_Query->endWhereGroup();
-				}
+                $SQL_Query->beginWhereGroup();
+                $SQL_Query->like('gdn_comment.Body', $SQL_Query_Search_Text);
+                $SQL_Query->Orlike('gdn_discussion.Name', $SQL_Query_Search_Text);
+                $SQL_Query->endWhereGroup();
 			}
 		}
 		// If the SearchIn filter is not within the array, search in both the discussion title and text.
 		else
 		{
-			if ($SQL_Query_Search_Mode == "LIKE")
-			{
-				$SQL_Query->beginWhereGroup();
-				$SQL_Query->like('gdn_comment.Body', $SQL_Query_Search_Text);
-				$SQL_Query->Orlike('gdn_discussion.Name', $SQL_Query_Search_Text);
-				$SQL_Query->endWhereGroup();
-			}
+			$SQL_Query->beginWhereGroup();
+            $SQL_Query->like('gdn_comment.Body', $SQL_Query_Search_Text);
+            $SQL_Query->Orlike('gdn_discussion.Name', $SQL_Query_Search_Text);
+            $SQL_Query->endWhereGroup();
 		}
 		
 		// *************************************
-		
+        
+        // Use GroupBy to remove duplicate discussion results (for a cleaner, less cluttered look. Especially useful when searching for discussion titles)
+        $SQL_Query->GroupBy('gdn_discussion.DiscussionID');
+        
 		// Finally, make sure that the query searches from newest to oldest, and only returns 20 results.
 		$SQL_Query->orderBy('gdn_comment.DateInserted', 'desc');
 		$SQL_Query->limit($Limit, $Offset);
 		
+        // DEBUG: See the finished SQL query:
+        //echo '<pre>' . var_export( $SQL_Query->getSelect(), true) . '</pre>'; // NOTE: Debug print helper
+        
 		// Get the results of the SQL query!
 		$Result = $SQL_Query->get()->ResultArray();
-		
+        
 		// Go through the results...
 		foreach ($Result as $Key => $Value)
 		{
-			// Use this to quickly see info within $Value.
-			//var_dump($Value);
+			// DEBUG: See the info within $Value.
+			//echo '<pre>' . var_export($Value, true) . '</pre>'; // NOTE: Debug print helper
 			
 			$Ret_Val = array();
 			$Ret_Val["Relavence"] = $Key;
-			$Ret_Val["PrimaryID"] = $Value["DiscussionID"];
-			$Ret_Val["Title"] = $Value["Discussion_Name"];
+            $Ret_Val["PrimaryID"] = $Value["DiscussionID"];
+			$Ret_Val["Title"] = $Value["Name"];
 			
-			// See class.searchcontroller.php in Application/Dashboard to find this function being used!
-			$Summary_Text = searchExcerpt(htmlspecialchars(Gdn_Format::plainText($Value['Body'], $Value['Format'])), $Search);
+            // See class.searchcontroller.php in Application/Dashboard to find this function being used!
+            $Summary_Text = searchExcerpt(htmlspecialchars(Gdn_Format::plainText($Value['Body'], $Value['Format'])), $Search);
 			$Ret_Val["Summary"] = $Summary_Text;
 			
 			$Ret_Val["Format"] = $Value['Format'];
-			$Ret_Val["CategoryID"] = $Value["Discussion_CategoryID"];
+			$Ret_Val["CategoryID"] = $Value["CategoryID"];
 			
 			$Comment_Model = new CommentModel();
 			$Comment_ID = $Comment_Model->GetID($Value["CommentID"]);
