@@ -82,9 +82,7 @@ class SearchModel extends Gdn_Model
 		
 		// The SQL query will always need the following as the beginning, regardless of which filter(s) are applied.
         $SQL_Query = Gdn::sql();
-        
-        $SQL_Query = Gdn::sql();
-		$SQL_Query->reset();
+        $SQL_Query->reset();
         $SQL_Query->select("gdn_discussion.*");
         // Get comment data AFTER getting the discussion data so comment data overrides discussion data with the same fields (which works for this case)
 		$SQL_Query->select("gdn_comment.*");
