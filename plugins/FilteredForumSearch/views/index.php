@@ -6,12 +6,9 @@
 	$Form = $this->Form;
 	$Form->InputPrefix = '';
 
-	
 	// WORKS
 	//var_dump(Gdn::session()->isValid());
-	
 	//var_dump(Gdn::session()->User);
-
 
 	$ADV_Filter_SearchedSearchIn=$Form->GetFormValue('ADV_Filter_SearchIn');
 	$ADV_Filter_SearchedCategory=$Form->GetFormValue('ADV_Filter_Category');
@@ -52,7 +49,19 @@
 				'any_occurrence' => Gdn::translate('Return all occurrences'),
 				'exact_only' => Gdn::translate('Return only exact occurrences'));
 	$SearchOccurrenceDropdownFields = array('TextField' => 'Text', 'ValueField' => 'Code', 'Value' => $ADV_Filter_SearchedOccurrence);
-
+    
+    
+    // (Optional: QNA dropdown when the QNA plugin is enabled. Thanks donshakespeare from the Vanilla forums for the code snippet!)
+    $QNA_Menu = '';
+    if (class_exists('QnAPlugin'))
+    {
+        $QNA_Menu = '<div class="SearchAnswerDropdown">'.
+            $Form->Label(Gdn::translate("Fitler by Q&A"), 'ADV_Filter_QNA').
+            ' '.
+            $Form->DropDown('ADV_Filter_QNA', $AnswerDropdownOptions, $AnswerDropdownFields).
+            '</div>';
+    }
+    
 
 	echo  
 	$Form->Open(array('action' => Url('/search'), 'method' => 'get')),
@@ -83,20 +92,11 @@
 		$Form->Label(Gdn::translate('Filter by Category'), 'ADV_Filter_Category'), ' ',
 		$Form->CategoryDropDown('ADV_Filter_Category', array('Value' => $ADV_Filter_SearchedCategory, 'IncludeNull' => true)).
 		
-		// NOTE: only return discussion types that this user can see, instead of returning ALL of them
-		//$permissionCategory = CategoryModel::permissionCategory($this->CategoryID);
-		//$discussionTypes = CategoryModel::allowedDiscussionTypes($permissionCategory, isset($category) ? $category : []);
-		//$Form->CategoryDropDown('ADV_Filter_Category', array('Value' => $ADV_Filter_SearchedCategory, 'IncludeNull' => true, 'PermFilter'=> ['AllowedDiscussionTypes' => $discussionTypes])).
-		
-		// END OF NOTE
-		
 		'</div>',
 		
-		// Q&A dropdown
-		'<div class="SearchAnswerDropdown">',
-		$Form->Label(Gdn::translate('Filter by Q&A'), 'ADV_Filter_QNA'), ' ',
-		$Form->DropDown('ADV_Filter_QNA', $AnswerDropdownOptions, $AnswerDropdownFields).
-		'</div>',
+		// Q&A dropdown (if QnA plugin is enabled)
+		$QNA_Menu.
+        
 		
 		// Comment count dropdown
 		'<div class="SearchCommentCountDropdown">',

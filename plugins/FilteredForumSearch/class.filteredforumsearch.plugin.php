@@ -22,10 +22,9 @@
 $PluginInfo['FilteredForumSearch'] = array(
     'Name' => 'Filtered Forum Search',
     'Description' => 'Adds additional filters to search with.',
-    'Version' => '2.3.1',
+    'Version' => '2.4.0',
     'RequiredApplications' => array('Vanilla' => '2.4'),
     'RequiredTheme' => FALSE,
-    'RequiredPlugins' => array ('QnA' => '1.4'),
     'MobileFriendly' => TRUE,
     'HasLocale' => FALSE,
     'RegisterPermissions' => FALSE,
@@ -51,10 +50,6 @@ class FilteredForumSearchPlugin extends Gdn_Plugin {
         $Search = $Sender->Form->GetFormValue('Search');
         $Mode = $Sender->Form->GetFormValue('Mode');
 		
-		// TwistedTwigleg note:
-		//		Need to look at this file! Looked at most of it and it looks good, just need to
-		//		double check a few things.
-		//
 		// Send all additional advance filter data in a single array
 		$AdvanceParams = array();
 		$AdvanceParams["ADV_Filter_SearchIn"] = $Sender->Form->GetFormValue('ADV_Filter_SearchIn');
