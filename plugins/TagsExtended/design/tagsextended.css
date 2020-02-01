@@ -205,6 +205,11 @@ background-color: #3a3f44;
 color: #fff;
 }
 
+#Tag_XR{
+background-color: ##f7f7f7;
+color: #742a8c;
+}
+
 .MessageList .Meta.InlineTags {
     min-height: 0;
     display: none;
