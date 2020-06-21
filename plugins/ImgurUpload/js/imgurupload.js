@@ -120,23 +120,36 @@
 				}
                 break;
 
-            // NOTE: The code below is for the new Vanilla Rich post editor. It does not work, unfortunately.
-            // Leaving this here as a reference in case we want to tackle making the Imgur plugin with Rich Editor again.
-            /*
             case "rich":
-                
-                response = '<div class="js-embed embedResponsive" contenteditable="false">';
-                response += '<div class="embedExternal embedImage">';
-                response += '<div class="embed-focusableElement embedExternal-content" aria-label="External embed content - image">';
-                response += '<a class="embedImage-link" href="' + url + '" rel="nofollow noopener" target="_blank">';
-                response += '<img class="embedImage-img" src="' + url + '" alt="Embeded image">';
-                response += '</a>';
-                response += '</div>';
-                response += '</div>';
-                response += '</div>';
-                
+				// HELPFUL source: https://stackoverflow.com/questions/46626633/how-do-you-insert-html-into-a-quilljs
+				
+				// Works - but is just text...
+				//quill.insertText(quill.getSelection(true), '<img src="' + url + '">', "api");
+				
+				// Works, but completely overrides everything. In theory is safer than dangerously pasting HTML, but
+				// I'm not sure how to inject the image...
+				//const delta = quill.clipboard.convert('<img src="' + url + '">');
+				//quill.setContents(delta, "silent");
+				
+				// Works fully, but requires dangerous HTML.
+				// to work around this, make sure the url starts with "https://i.imgur.com/"
+				// (adapted from https://stackoverflow.com/questions/9714525/javascript-image-url-verify)
+				console.log(url);
+				if (url.startsWith("https://i.imgur.com/") == true) {
+					// Then make sure we are embedding a url using a regular expression
+					if (url.match(/\.(jpeg|jpg|gif|png|tiff|bmp)$/) != null) {
+						// If all the checks work, then paste the HTML!
+						var html = '<img src="' + url + '" alt="Imgur image" width="' + data.width + '" height="' + data.height + '" />'
+						quill.clipboard.dangerouslyPasteHTML(quill.getSelection(true), html, "user");
+					} else {
+						alert("URL received from Imgur plugin does not point to a valid/supported image format! Please notify forum staff!");
+					}
+				} else {
+					alert("URL received from Imgur plugin does not point to Imgur! Please notify forum staff!");
+				}
+				
+				return '';
                 break;
-            */
                 
 			default :
 				response = url;
@@ -216,21 +229,20 @@
 
 			ta.after( previewCtx );
 			
+			/*
 			if ( helpTextWrap.length && ! imgurHelpText.length ) {
-
 				$("<div/>", {
 					"class": "imgur-help-text",
 					text: "You can drag and drop images into the comment box."
 				}).appendTo( helpTextWrap );
-
 			}
+			*/
 
 			// Setup the dropzone
 			if ( gdn.definition("enabledragdrop") === "1" ) {
 
 				dzs.push( new Dropzone(ta[0], getDropzoneConfig(ta, previewCtx, false)) );
 				dzIdx = dzs.length - 1;
-
 			}
 
 			// If we are dealing with a device that reports to be a touch-screen device,
@@ -253,31 +265,6 @@
 
 			});
 
-			if ( dzIdx > -1 ) {
-
-                /*
-				// Handle users pasting image data straight from the clipboard
-				ta.on( "paste", function ( e ) {
-
-					var i, items = e.originalEvent.clipboardData.items;
-
-					// Loop through items on the clipboard
-					for ( i = 0; i < items.length; i++ ) {
-
-						// Check if item is of an image type
-						if ( items[i].kind === "file" && items[i].type.indexOf("image/") > -1 ) {
-
-							// Trigger DropzoneJS's file add routine
-							dzs[dzIdx].addFile( items[i].getAsFile() );
-
-						}
-					}
-
-				});
-                */
-
-			}
-
 			// Do some additional magic with image links
 			// Useful when users drag an image from another browser window
 			// This feature can be toggled in the plugin config page.
@@ -292,7 +279,7 @@
 						e.preventDefault();
 						e.stopPropagation();
 
-						if ( data.match(/([a-z\-_0-9\/\:\.]*\.(jpg|jpeg|png|gif))/i) ) {
+						if ( data.match(/([a-z\-_0-9\/\:\.]*\.(jpeg|jpg|gif|png|tiff|bmp))/i) ) {
 
 							insertAtCursor( ta[0], getLinkCode({link: data}) );
 
