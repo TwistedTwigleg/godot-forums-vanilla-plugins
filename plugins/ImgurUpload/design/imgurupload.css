@@ -61,3 +61,10 @@
 .Button.ButtonAddImages {
 	margin-right: 5px;
 }
+
+/* Hide the image upload button in the RichTextEditor for Vanilla by hiding the CSS. */
+/* TODO: make this optional or something... */
+button.richEditor-button.richEditor-embedButton.richEditor-buttonUpload {
+	display: none;
+}
+

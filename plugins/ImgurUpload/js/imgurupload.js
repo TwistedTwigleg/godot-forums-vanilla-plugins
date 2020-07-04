@@ -122,25 +122,26 @@
 
             case "rich":
 				// HELPFUL source: https://stackoverflow.com/questions/46626633/how-do-you-insert-html-into-a-quilljs
-				
-				// Works - but is just text...
-				//quill.insertText(quill.getSelection(true), '<img src="' + url + '">', "api");
-				
-				// Works, but completely overrides everything. In theory is safer than dangerously pasting HTML, but
-				// I'm not sure how to inject the image...
-				//const delta = quill.clipboard.convert('<img src="' + url + '">');
-				//quill.setContents(delta, "silent");
-				
+				//
 				// Works fully, but requires dangerous HTML.
 				// to work around this, make sure the url starts with "https://i.imgur.com/"
 				// (adapted from https://stackoverflow.com/questions/9714525/javascript-image-url-verify)
-				console.log(url);
 				if (url.startsWith("https://i.imgur.com/") == true) {
 					// Then make sure we are embedding a url using a regular expression
 					if (url.match(/\.(jpeg|jpg|gif|png|tiff|bmp)$/) != null) {
 						// If all the checks work, then paste the HTML!
-						var html = '<img src="' + url + '" alt="Imgur image" width="' + data.width + '" height="' + data.height + '" />'
-						quill.clipboard.dangerouslyPasteHTML(quill.getSelection(true), html, "user");
+						//var html = '<img src="' + url + '" alt="Imgur image" width="' + data.width + '" height="' + data.height + '" />'
+						
+						var html = '';
+						html += '<div class="js-embed embedResponsive" contenteditable="false">';
+						html += '<div class="embedImage">';
+						html += '<div class="embedImage-link">';
+						html += '<img class="embedImage-img embed-focusableElement" src="' + url + '" alt="Imgur image" tabindex="-1">';
+						html += '</div>';
+						html += '</div>';
+						html += '</div>';
+						//console.log(html);
+						quill.clipboard.dangerouslyPasteHTML(quill.getSelection(true).index, html, "api");
 					} else {
 						alert("URL received from Imgur plugin does not point to a valid/supported image format! Please notify forum staff!");
 					}
@@ -185,7 +186,14 @@
 			},
 			success: function ( file, response ) {
 				if ( response.success ) {
-					insertAtCursor( ta[0], getLinkCode(response.data) );
+					var link_data = getLinkCode(response.data);
+					if (link_data) {
+						if (link_data === "") {
+							// Do nothing!
+						} else {
+							insertAtCursor( ta[0], link_data);
+						}
+					}
 				} else {
 					gdn.informError( "Something went wrong while uploading your images. Our image host, imgur.com, may be having technical issues. Please try again in a few minutes." )
 				}
@@ -281,7 +289,14 @@
 
 						if ( data.match(/([a-z\-_0-9\/\:\.]*\.(jpeg|jpg|gif|png|tiff|bmp))/i) ) {
 
-							insertAtCursor( ta[0], getLinkCode({link: data}) );
+							var link_data = getLinkCode({link: data})
+							if (link_data) {
+								if (link_data === "") {
+									// Do nothing!
+								} else {
+									insertAtCursor( ta[0], link_data);
+								}
+							}
 
 						} else {
 
